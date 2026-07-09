@@ -1315,9 +1315,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Upper Banner Placement */}
-        <AdsterraBanner adKey={adsterraBannerKey} enabled={adsEnabled} />
-
         {/* ---------------------------------------------------- */}
         {/* STATUS ALERTS                                        */}
         {/* ---------------------------------------------------- */}
@@ -2101,6 +2098,9 @@ export default function App() {
               Explore our other completely free digital toolboxes designed for builders, creators, and professionals.
             </p>
           </div>
+
+          {/* Upper Banner Placement */}
+          <AdsterraBanner adKey={adsterraBannerKey} enabled={adsEnabled} />
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3" id="network-tools-grid">
             {NETWORK_TOOLS.map((tool, index) => (
