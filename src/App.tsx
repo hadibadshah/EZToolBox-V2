@@ -519,6 +519,66 @@ async function clientFetchChannel(url: string, keyToUse: string): Promise<Channe
   };
 }
 
+// Adsterra Banner Component for perfect SPA / Netlify integration
+interface AdsterraBannerProps {
+  adKey: string;
+  enabled: boolean;
+  width?: number;
+  height?: number;
+}
+
+function AdsterraBanner({ adKey, enabled, width = 728, height = 90 }: AdsterraBannerProps) {
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!enabled || !adKey || !containerRef.current) {
+      if (containerRef.current) {
+        containerRef.current.innerHTML = "";
+      }
+      return;
+    }
+
+    // Reset container contents
+    containerRef.current.innerHTML = "";
+
+    const container = containerRef.current;
+    
+    // Create script 1 for atOptions configuration
+    const script1 = document.createElement("script");
+    script1.type = "text/javascript";
+    script1.innerHTML = `
+      var atOptions = {
+        'key' : '${adKey}',
+        'format' : 'iframe',
+        'height' : ${height},
+        'width' : ${width},
+        'params' : {}
+      };
+    `;
+    container.appendChild(script1);
+
+    // Create script 2 for loading the ad format code
+    const script2 = document.createElement("script");
+    script2.type = "text/javascript";
+    script2.src = `https://www.highperformanceformat.com/${adKey}/invoke.js`;
+    container.appendChild(script2);
+
+    return () => {
+      if (container) {
+        container.innerHTML = "";
+      }
+    };
+  }, [enabled, adKey, width, height]);
+
+  if (!enabled || !adKey) return null;
+
+  return (
+    <div className="flex items-center justify-center my-6 max-w-4xl mx-auto overflow-hidden">
+      <div ref={containerRef} className="adsterra-banner-container min-h-[90px] w-full flex items-center justify-center overflow-x-auto" />
+    </div>
+  );
+}
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<"video" | "channel">("video");
   const [videoUrlInput, setVideoUrlInput] = useState("");
@@ -539,6 +599,7 @@ export default function App() {
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [copiedTitle, setCopiedTitle] = useState(false);
   const [copiedDescription, setCopiedDescription] = useState(false);
+  const [copiedChannelDesc, setCopiedChannelDesc] = useState(false);
 
   // UTC Live Clock State
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -557,6 +618,50 @@ export default function App() {
   const [copiedTags, setCopiedTags] = useState(false);
   const [copiedTagText, setCopiedTagText] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("yt_dark_mode") === "true");
+
+  // Adsterra Monetization states
+  const [adsEnabled, setAdsEnabled] = useState(() => {
+    const saved = localStorage.getItem("yt_ads_enabled");
+    return saved === null ? true : saved === "true";
+  });
+  const [adsterraBannerKey, setAdsterraBannerKey] = useState(() => {
+    return localStorage.getItem("yt_adsterra_banner_key") || "7e08b74965e5580393a5461cede22083";
+  });
+  const [adsterraSocialBarUrl, setAdsterraSocialBarUrl] = useState(() => {
+    return localStorage.getItem("yt_adsterra_social_bar_url") || "https://pl30252585.effectivecpmnetwork.com/94/47/9b/94479bdb2acf4104d1a18b7942b19b96.js";
+  });
+
+  // Dynamically inject/remove Adsterra Social Bar script
+  useEffect(() => {
+    if (!adsEnabled || !adsterraSocialBarUrl) {
+      const existing = document.getElementById("adsterra-social-bar");
+      if (existing) {
+        document.body.removeChild(existing);
+      }
+      return;
+    }
+
+    // Clean up any existing script to avoid duplicates on state change
+    const oldScript = document.getElementById("adsterra-social-bar");
+    if (oldScript) {
+      document.body.removeChild(oldScript);
+    }
+
+    const script = document.createElement("script");
+    script.src = adsterraSocialBarUrl;
+    script.type = "text/javascript";
+    script.async = true;
+    script.id = "adsterra-social-bar";
+    
+    document.body.appendChild(script);
+
+    return () => {
+      const existing = document.getElementById("adsterra-social-bar");
+      if (existing) {
+        document.body.removeChild(existing);
+      }
+    };
+  }, [adsEnabled, adsterraSocialBarUrl]);
 
   // FAQ active indexes
   const [openFaqs, setOpenFaqs] = useState<Record<number, boolean>>({});
@@ -845,17 +950,6 @@ export default function App() {
 
             <div className="flex items-center space-x-2 shrink-0" id="header-actions">
             <button
-              onClick={() => setShowSettings(!showSettings)}
-              className={`p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors relative flex items-center justify-center ${showSettings ? "bg-gray-100 dark:bg-neutral-800 ring-2 ring-emerald-500/30" : ""}`}
-              title="YouTube API Settings"
-              id="settings-toggle-btn"
-            >
-              <Settings className="h-5 w-5" />
-              {(!apiKey && !hasServerKey) && (
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-amber-500 animate-ping" id="api-alert-badge" />
-              )}
-            </button>
-            <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors flex items-center justify-center"
               title="Toggle Theme"
@@ -966,6 +1060,77 @@ export default function App() {
                     <li>Generate an API Key under the <strong>Credentials</strong> menu.</li>
                     <li>Copy and paste your credentials into the input field above!</li>
                   </ol>
+                </div>
+              </div>
+
+              {/* Adsterra Monetization Controls */}
+              <div className="border-t border-gray-100 dark:border-neutral-800/80 pt-6 mt-6">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Tv className="h-4.5 w-4.5 text-emerald-500" />
+                  <h4 className="font-display font-extrabold text-sm text-gray-950 dark:text-white uppercase tracking-tight">
+                    Adsterra Monetization Engine
+                  </h4>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-5">
+                  Configure real-time ad placements for your site. Pause ads or customize Adsterra script keys dynamically. All settings remain saved in local storage.
+                </p>
+
+                <div className="grid sm:grid-cols-3 gap-4 bg-slate-50 dark:bg-neutral-950 p-4 rounded-xl border border-slate-200/40 dark:border-neutral-800/60">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 dark:text-gray-300 mb-1.5 uppercase tracking-wide">
+                      Monetization Status
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newVal = !adsEnabled;
+                        setAdsEnabled(newVal);
+                        localStorage.setItem("yt_ads_enabled", String(newVal));
+                        setSuccessMsg(`Ad placements successfully ${newVal ? "activated" : "paused"}!`);
+                        setTimeout(() => setSuccessMsg(null), 3000);
+                      }}
+                      className={`w-full py-2 px-3 text-xs font-bold rounded-lg border transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 ${
+                        adsEnabled
+                          ? "bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-800/60 dark:text-emerald-400"
+                          : "bg-white border-slate-300 text-gray-500 hover:text-gray-700 dark:bg-neutral-900 dark:border-neutral-700 dark:text-gray-400"
+                      }`}
+                    >
+                      <span className={`h-2 w-2 rounded-full ${adsEnabled ? "bg-emerald-500 animate-pulse" : "bg-gray-300"}`} />
+                      {adsEnabled ? "Ads Displaying" : "Ads Paused"}
+                    </button>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 dark:text-gray-300 mb-1.5 uppercase tracking-wide">
+                      728x90 Banner Tag ID (Key)
+                    </label>
+                    <input
+                      type="text"
+                      value={adsterraBannerKey}
+                      onChange={(e) => {
+                        setAdsterraBannerKey(e.target.value);
+                        localStorage.setItem("yt_adsterra_banner_key", e.target.value);
+                      }}
+                      placeholder="e.g. 7e08b74965e5580393a5461cede22083"
+                      className="w-full px-3 py-2 bg-white dark:bg-neutral-900 border border-slate-300 dark:border-neutral-700 text-xs rounded-lg focus:outline-none focus:border-emerald-500 font-mono text-gray-900 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 dark:text-gray-300 mb-1.5 uppercase tracking-wide">
+                      Social Bar Script URL
+                    </label>
+                    <input
+                      type="text"
+                      value={adsterraSocialBarUrl}
+                      onChange={(e) => {
+                        setAdsterraSocialBarUrl(e.target.value);
+                        localStorage.setItem("yt_adsterra_social_bar_url", e.target.value);
+                      }}
+                      placeholder="e.g. https://pl30252585.effectivecpmnetwork.com/94/47/9b/94479bdb2acf4104d1a18b7942b19b96.js"
+                      className="w-full px-3 py-2 bg-white dark:bg-neutral-900 border border-slate-300 dark:border-neutral-700 text-xs rounded-lg focus:outline-none focus:border-emerald-500 font-mono text-gray-900 dark:text-white"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1149,6 +1314,9 @@ export default function App() {
             )}
           </div>
         </div>
+
+        {/* Upper Banner Placement */}
+        <AdsterraBanner adKey={adsterraBannerKey} enabled={adsEnabled} />
 
         {/* ---------------------------------------------------- */}
         {/* STATUS ALERTS                                        */}
@@ -1884,15 +2052,38 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Channel About Description */}
-                <div className="bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 p-5 rounded-2xl shadow-sm">
-                  <h3 className="font-display font-bold text-gray-900 dark:text-white text-sm mb-2.5">
-                    About {channelData.title}
-                  </h3>
-                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line" id="channel-description">
-                    {channelData.description || "No description provided by the channel creator."}
-                  </p>
-                </div>
+                 {/* Channel About Description */}
+                 <div className="bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 p-5 rounded-2xl shadow-sm">
+                   <div className="flex items-center justify-between gap-3 mb-3 border-b border-slate-100 dark:border-neutral-800 pb-2">
+                     <h3 className="font-display font-bold text-gray-900 dark:text-white text-sm">
+                       About {channelData.title}
+                     </h3>
+                     {channelData.description && (
+                       <button
+                         onClick={() => {
+                           navigator.clipboard.writeText(channelData.description);
+                           setCopiedChannelDesc(true);
+                           setTimeout(() => setCopiedChannelDesc(false), 2000);
+                         }}
+                         className="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-slate-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-gray-500 hover:text-emerald-600 dark:text-neutral-400 dark:hover:text-emerald-400 text-[10px] font-bold transition-all duration-200 flex items-center gap-1 border border-slate-100 dark:border-neutral-700 cursor-pointer"
+                         title="Copy Channel About Description"
+                       >
+                         {copiedChannelDesc ? (
+                           <>
+                             <Check className="h-3 w-3 text-emerald-600 dark:text-emerald-400" /> Copied!
+                           </>
+                         ) : (
+                           <>
+                             <Copy className="h-3 w-3" /> Copy About
+                           </>
+                         )}
+                       </button>
+                     )}
+                   </div>
+                   <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line" id="channel-description">
+                     {channelData.description || "No description provided by the channel creator."}
+                   </p>
+                 </div>
               </motion.div>
             );
           })()}
@@ -1989,6 +2180,9 @@ export default function App() {
             })}
           </div>
         </section>
+
+        {/* Bottom Banner Placement */}
+        <AdsterraBanner adKey={adsterraBannerKey} enabled={adsEnabled} />
 
           </>
         ) : (
