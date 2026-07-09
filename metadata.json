@@ -1,0 +1,6 @@
+{
+  "name": "EZ Toolbox YouTube Analyzer & Downloader",
+  "description": "A professional, highly advanced All-in-One YouTube Analyzer & Downloader Dashboard with video statistics, hidden tags viewer, thumbnail downloader, and channel analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
