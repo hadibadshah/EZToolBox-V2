@@ -23,32 +23,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- Primary SEO Meta Tags -->
-    <title>EZ Toolbox 🛠️ - Free YouTube Analyzer & Thumbnail Downloader</title>
-    <meta name="title" content="EZ Toolbox 🛠️ - Free YouTube Analyzer & Thumbnail Downloader" />
-    <meta name="description" content="Analyze any YouTube video or channel instantly. Get views, upload date, tags, channel ranking, category, estimated earnings, and download thumbnails in HD for free!" />
-    <meta name="keywords" content="youtube analyzer, youtube thumbnail downloader, youtube tags viewer, download youtube thumbnails hd, ez toolbox, free youtube tools" />
-    <meta name="author" content="EZ Toolbox" />
-    <meta name="robots" content="index, follow" />
-
-    <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://eztoolbox.xyz/" />
-    <meta property="og:title" content="EZ Toolbox 🛠️ - Free YouTube Analyzer & Thumbnail Downloader" />
-    <meta property="og:description" content="Analyze any YouTube video or channel instantly. Get views, upload date, tags, channel ranking, category, estimated earnings, and download thumbnails in HD for free!" />
-    <meta property="og:image" content="https://eztoolbox.xyz/assets/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:site_name" content="EZ Toolbox" />
-
-    <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://eztoolbox.xyz/" />
-    <meta name="twitter:title" content="EZ Toolbox 🛠️ - Free YouTube Analyzer & Thumbnail Downloader" />
-    <meta name="twitter:description" content="Analyze any YouTube video or channel instantly. Get views, upload date, tags, channel ranking, category, estimated earnings, and download thumbnails in HD for free!" />
-    <meta name="twitter:image" content="https://eztoolbox.xyz/assets/og-image.png" />
+    <!-- Silence benign third-party ad script errors (like Adsterra) from bubbling up to the global error handler -->
+    <script id="error-filter">
+      window.addEventListener('error', function(e) {
+        if (e.message === 'Script error.' || (e.filename && (e.filename.includes('highperformanceformat') || e.filename.includes('effectivecpmnetwork') || e.filename.includes('adsterra')))) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true);
+      window.addEventListener('unhandledrejection', function(e) {
+        if (e.reason && e.reason.message === 'Script error.') {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true);
+    </script>
 
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2310b981'/%3E%3Ctext x='50' y='65' font-family='system-ui, sans-serif' font-weight='900' font-size='52' fill='white' text-anchor='middle'%3EEZ%3C/text%3E%3C/svg%3E" />
+    <meta name="google-site-verification" content="googleb53210ff3f96f54d" />
+    <title>EZ Toolbox — YouTube Analyzer & Downloader</title>
   </head>
   <body>
     <div id="root"></div>
