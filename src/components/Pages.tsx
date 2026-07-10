@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowLeft, Mail, Phone, ExternalLink, Shield, FileText, Info, BookOpen, MessageSquare } from "lucide-react";
 
 interface PagesProps {
@@ -7,7 +7,38 @@ interface PagesProps {
 }
 
 export const Pages: React.FC<PagesProps> = ({ currentPage, setCurrentPage }) => {
-  const [selectedArticle, setSelectedArticle] = useState<number | null>(null);
+  const getArticleIdFromPath = (path: string): number | null => {
+    if (path.includes("/articles/youtube-tag-extractor-seo-optimization")) return 1;
+    if (path.includes("/articles/youtube-monetization-cpm-rates-country")) return 2;
+    if (path.includes("/articles/social-blade-alternative-track-subscriber-growth")) return 3;
+    return null;
+  };
+
+  const [selectedArticle, setSelectedArticleInternal] = useState<number | null>(() => {
+    return getArticleIdFromPath(window.location.pathname);
+  });
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setSelectedArticleInternal(getArticleIdFromPath(window.location.pathname));
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  const setSelectedArticle = (id: number | null) => {
+    if (id === null) {
+      window.history.pushState(null, "", "/articles");
+    } else {
+      const article = articles.find(a => a.id === id);
+      if (article) {
+        window.history.pushState(null, "", `/articles/${article.slug}`);
+      }
+    }
+    setSelectedArticleInternal(id);
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const articles = [
     {

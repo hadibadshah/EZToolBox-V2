@@ -583,7 +583,40 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<"video" | "channel">("video");
   const [videoUrlInput, setVideoUrlInput] = useState("");
   const [channelUrlInput, setChannelUrlInput] = useState("");
-  const [currentPage, setCurrentPage] = useState<"home" | "about" | "contact" | "privacy" | "terms" | "articles">("home");
+  const [currentPage, setCurrentPageInternal] = useState<"home" | "about" | "contact" | "privacy" | "terms" | "articles">(() => {
+    const path = window.location.pathname;
+    if (path === "/about") return "about";
+    if (path === "/contact") return "contact";
+    if (path === "/privacy") return "privacy";
+    if (path === "/terms") return "terms";
+    if (path.startsWith("/articles")) return "articles";
+    return "home";
+  });
+
+  const setCurrentPage = (page: "home" | "about" | "contact" | "privacy" | "terms" | "articles") => {
+    let path = "/";
+    if (page !== "home") {
+      path = `/${page}`;
+    }
+    if (window.location.pathname !== path) {
+      window.history.pushState(null, "", path);
+    }
+    setCurrentPageInternal(page);
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (path === "/about") setCurrentPageInternal("about");
+      else if (path === "/contact") setCurrentPageInternal("contact");
+      else if (path === "/privacy") setCurrentPageInternal("privacy");
+      else if (path === "/terms") setCurrentPageInternal("terms");
+      else if (path.startsWith("/articles")) setCurrentPageInternal("articles");
+      else setCurrentPageInternal("home");
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   // Scroll to top when page changes
   useEffect(() => {

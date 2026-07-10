@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 
 // Load environment variables
@@ -417,9 +418,103 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
+    
+    // Serve static files but don't serve index.html automatically (index: false)
+    app.use(express.static(distPath, { index: false }));
+
     app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
+      try {
+        const indexPath = path.join(distPath, "index.html");
+        
+        if (!fs.existsSync(indexPath)) {
+          return res.sendFile(indexPath);
+        }
+
+        let html = fs.readFileSync(indexPath, "utf-8");
+        const reqPath = req.path;
+
+        // Default Meta Tags (Home Page)
+        let title = "EZ Toolbox 🛠️ — YouTube Analyzer & Thumbnail Downloader";
+        let description = "Analyze any YouTube video or channel instantly. Get views, upload date, tags, channel ranking, category, estimated earnings, and download thumbnails in HD for free!";
+        let keywords = "youtube analyzer, youtube thumbnail downloader, youtube tags viewer, download youtube thumbnails hd, ez toolbox, free youtube tools";
+        let url = `https://eztoolbox.xyz${reqPath}`;
+
+        // Match pages and override metadata
+        if (reqPath === "/about") {
+          title = "About Us — EZ Toolbox 🛠️";
+          description = "Learn about EZ Toolbox: the ultimate, professional-grade digital toolkit engineered to simplify and optimize your digital creator and YouTube SEO journey.";
+          keywords = "about ez toolbox, youtube seo, metadata extraction, channel analytics, digital creator tools";
+        } else if (reqPath === "/contact") {
+          title = "Contact Us / Live Support — EZ Toolbox 🛠️";
+          description = "Get in touch with EZ Toolbox. Reach out to our official WhatsApp support and email helpdesk for inquiries, bug reports, and custom assistance.";
+          keywords = "contact ez toolbox, youtube support, whatsapp helpdesk, email support";
+        } else if (reqPath === "/privacy") {
+          title = "Privacy Policy — EZ Toolbox 🛠️";
+          description = "Read the EZ Toolbox Privacy Policy. Learn how we handle your preferences, cache local keys, comply with YouTube API v3, and ensure user trust.";
+          keywords = "privacy policy, adsense compliance, youtube api compliance, local-first security";
+        } else if (reqPath === "/terms") {
+          title = "Terms & Conditions — EZ Toolbox 🛠️";
+          description = "Review the terms of service and agreement for utilizing the EZ Toolbox video tag extractor, thumbnail downloader, and channel metrics analyzer.";
+          keywords = "terms of service, user agreement, api quota liability, disclaimer of content warranties";
+        } else if (reqPath === "/articles") {
+          title = "SEO Growth Articles & Creators Blog — EZ Toolbox 🛠️";
+          description = "Master the YouTube algorithm, rank videos higher, learn search engine optimization (SEO) tactics, and decode monetization RPM/CPM rates by country.";
+          keywords = "youtube seo articles, creators blog, rank youtube videos, high cpm countries, youtube algorithm guide";
+        } else if (reqPath.includes("/articles/youtube-tag-extractor-seo-optimization")) {
+          title = "How to Use a YouTube Tag Extractor for SEO — EZ Toolbox";
+          description = "Unlock search algorithms by finding hidden tags on YouTube and integrating them into your descriptions and metadata dynamically to rank videos fast.";
+          keywords = "YouTube Tag Extractor, how to find hidden tags on youtube, youtube seo tool, rank youtube videos fast";
+        } else if (reqPath.includes("/articles/youtube-monetization-cpm-rates-country")) {
+          title = "YouTube Monetization & CPM Rates by Country — EZ Toolbox";
+          description = "Learn how the YouTube Partner Program validates channels, check channel monetization status, and calculate ad earnings potential based on regional CPM.";
+          keywords = "YouTube monetization checker, check channel monetization status, youtube CPM calculator, high CPM countries";
+        } else if (reqPath.includes("/articles/social-blade-alternative-track-subscriber-growth")) {
+          title = "Social Blade Alternative: Track Subscriber Growth — EZ Toolbox";
+          description = "Discover why tracking historical daily subscriber growth is critical for digital branding and how to leverage lightweight analytic dashboards to predict channel trends.";
+          keywords = "Social Blade alternative, youtube channel analytics tool, daily subscriber growth tracker, estimate youtube earnings";
+        }
+
+        // Construct complete, standard SEO & Open Graph Tags for WhatsApp / Facebook
+        const seoTags = `
+    <!-- Primary SEO Meta Tags -->
+    <title>${title}</title>
+    <meta name="title" content="${title}" />
+    <meta name="description" content="${description}" />
+    <meta name="keywords" content="${keywords}" />
+    <meta name="author" content="EZ Toolbox" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="${url}" />
+    <meta property="og:title" content="${title}" />
+    <meta property="og:description" content="${description}" />
+    <meta property="og:image" content="https://eztoolbox.xyz/assets/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="EZ Toolbox" />
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="${url}" />
+    <meta name="twitter:title" content="${title}" />
+    <meta name="twitter:description" content="${description}" />
+    <meta name="twitter:image" content="https://eztoolbox.xyz/assets/og-image.png" />
+        `;
+
+        // Replace the default title tag with the dynamically generated SEO tags block
+        if (html.includes("<title>EZ Toolbox — YouTube Analyzer & Downloader</title>")) {
+          html = html.replace("<title>EZ Toolbox — YouTube Analyzer & Downloader</title>", seoTags);
+        } else {
+          html = html.replace(/<title>[^<]*<\/title>/i, seoTags);
+        }
+
+        res.setHeader("Content-Type", "text/html");
+        return res.send(html);
+      } catch (err) {
+        console.error("Dynamic SEO metadata rendering error:", err);
+        return res.sendFile(path.join(distPath, "index.html"));
+      }
     });
   }
 
