@@ -247,28 +247,32 @@ const NETWORK_TOOLS: FreeTool[] = [
     description: "Merge, split, compress, unlock, and convert PDF documents in your browser securely.",
     icon: "FileText",
     url: "https://pdf.eztoolbox.xyz",
-    colorClass: "bg-blue-500"
+    colorClass: "bg-blue-500",
+    comingSoon: true
   },
   {
     name: "EZ Image Compressor",
     description: "Optimize and compress PNG, JPG, WebP, and SVG images with perfect quality retention.",
     icon: "Sliders",
     url: "https://compress.eztoolbox.xyz",
-    colorClass: "bg-purple-500"
+    colorClass: "bg-purple-500",
+    comingSoon: true
   },
   {
     name: "EZ Color Palette Generator",
     description: "Generate and curate aesthetic color schemes, custom shades, and CSS color tokens.",
     icon: "Palette",
     url: "https://color.eztoolbox.xyz",
-    colorClass: "bg-amber-500"
+    colorClass: "bg-amber-500",
+    comingSoon: true
   },
   {
     name: "EZ Universal Converter",
     description: "Convert media files, spreadsheets, formats, units, and custom system encodings.",
     icon: "RefreshCw",
     url: "https://convert.eztoolbox.xyz",
-    colorClass: "bg-rose-500"
+    colorClass: "bg-rose-500",
+    comingSoon: true
   }
 ];
 
@@ -2136,9 +2140,37 @@ export default function App() {
           <AdsterraBanner adKey={adsterraBannerKey} enabled={adsEnabled} />
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3" id="network-tools-grid">
-            {NETWORK_TOOLS.map((tool, index) => (
-              <a
-                href={tool.url}
+            {NETWORK_TOOLS.map((tool, index) => {
+              if (tool.comingSoon) {
+                return (
+                  <div
+                    key={index}
+                    className="p-4 bg-slate-50/50 border border-slate-200 dark:bg-neutral-900/40 dark:border-neutral-800/80 rounded-xl flex flex-col justify-between relative overflow-hidden"
+                  >
+                    <div>
+                      <span className="absolute top-2.5 right-2.5 text-[8px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30">
+                        Coming Soon
+                      </span>
+                      <div className={`${tool.colorClass} opacity-60 h-8 w-8 rounded-lg flex items-center justify-center mb-3 shrink-0 shadow-sm`} id={`tool-icon-wrapper-${index}`}>
+                        {renderIconComponent(tool.icon)}
+                      </div>
+                      <h4 className="font-display font-bold text-xs text-gray-500 dark:text-neutral-400">
+                        {tool.name}
+                      </h4>
+                      <p className="text-[10px] text-gray-400 dark:text-neutral-500 mt-1 leading-snug font-medium">
+                        {tool.description}
+                      </p>
+                    </div>
+                    <div className="mt-3 flex items-center text-[9px] text-gray-400 dark:text-neutral-500 font-bold uppercase tracking-wider gap-1">
+                      Under Construction
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <a
+                  href={tool.url}
                 key={index}
                 target="_blank"
                 rel="noreferrer"
@@ -2159,7 +2191,8 @@ export default function App() {
                   Launch App <ExternalLink className="h-3 w-3" />
                 </div>
               </a>
-            ))}
+            );
+          })}
           </div>
         </section>
 

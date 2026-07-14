@@ -43,6 +43,7 @@ export interface FreeTool {
   icon: string;
   url: string;
   colorClass: string;
+  comingSoon?: boolean;
 }
 
 export interface FAQItem {
