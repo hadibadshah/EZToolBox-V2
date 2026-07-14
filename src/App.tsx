@@ -922,7 +922,21 @@ export default function App() {
   });
 
   return (
-    <div className="min-h-screen font-sans bg-gray-50 text-gray-800 transition-colors duration-300 dark:bg-neutral-950 dark:text-gray-100 flex flex-col" id="app-root">
+    <div className="min-h-screen font-sans bg-gray-50 text-gray-800 transition-colors duration-300 dark:bg-neutral-950 dark:text-gray-100 flex flex-col relative" id="app-root">
+      
+      {/* Master Website Background Layer (Full-screen decorative layout) */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none" id="global-website-background">
+        {/* Full screen micro-dot matrix pattern - elegant premium dots with wider 80px spacing */}
+        <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1.5px,transparent_1.5px)] dark:bg-[radial-gradient(#475569_1.5px,transparent_1.5px)] [background-size:80px_80px] opacity-60 dark:opacity-45" />
+        
+        {/* Left Side: Soft and rich modern mesh gradient glowing orbs */}
+        <div className="absolute top-1/12 left-0 w-[500px] h-[500px] rounded-full bg-emerald-500/[0.07] dark:bg-emerald-500/[0.05] blur-[120px] -translate-x-1/3" />
+        <div className="absolute top-2/3 left-0 w-[600px] h-[600px] rounded-full bg-red-500/[0.06] dark:bg-red-500/[0.04] blur-[140px] -translate-x-1/2" />
+        
+        {/* Right Side: Soft and rich modern mesh gradient glowing orbs */}
+        <div className="absolute top-1/4 right-0 w-[600px] h-[600px] rounded-full bg-red-500/[0.07] dark:bg-red-500/[0.05] blur-[130px] translate-x-1/3" />
+        <div className="absolute top-3/4 right-0 w-[500px] h-[500px] rounded-full bg-emerald-500/[0.06] dark:bg-emerald-500/[0.04] blur-[120px] translate-x-1/2" />
+      </div>
       
       {/* ---------------------------------------------------- */}
       {/* HEADER BAR                                           */}
@@ -1179,7 +1193,7 @@ export default function App() {
       {/* API KEY WARNING BANNER                               */}
       {/* ---------------------------------------------------- */}
       {!hasServerKey && !apiKey && (
-        <div className="bg-amber-500/10 border-b border-amber-500/20 text-amber-800 dark:text-amber-400 py-3 px-4" id="api-warning-banner">
+        <div className="bg-amber-500/10 border-b border-amber-500/20 text-amber-800 dark:text-amber-400 py-3 px-4 relative z-10" id="api-warning-banner">
           <div className="max-w-4xl mx-auto flex items-center justify-between flex-wrap gap-2 text-xs font-medium">
             <span className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4 text-amber-500 shrink-0" />
@@ -1199,7 +1213,7 @@ export default function App() {
       {/* ---------------------------------------------------- */}
       {/* MAIN CONTAINER                                       */}
       {/* ---------------------------------------------------- */}
-      <main className="flex-grow max-w-6xl w-full mx-auto px-4 py-8" id="main-content">
+      <main className="flex-grow max-w-6xl w-full mx-auto px-4 py-8 relative z-10" id="main-content">
         {currentPage === "home" ? (
           <>
         
@@ -1213,8 +1227,8 @@ export default function App() {
           >
             <Sparkles className="h-3.5 w-3.5 animate-pulse" /> Complete YT SEO Toolkit
           </motion.div>
-          <h1 className="font-display font-extrabold text-3xl md:text-4xl text-gray-900 dark:text-white tracking-tight leading-tight" id="main-heading-title">
-            All-in-One <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-400">YouTube Analyzer</span>
+          <h1 className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-gray-950 dark:text-white tracking-tight leading-tight" id="main-heading-title">
+            All-in-One <span className="text-red-700 dark:text-red-500 drop-shadow-[0_2px_12px_rgba(185,28,28,0.15)]">YouTube Analyzer</span>
           </h1>
           <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mt-2 max-w-xl mx-auto font-medium">
             Analyze, audit, and extract metadata from YouTube videos and channels instantly. Download 1080p high-resolution thumbnails.
@@ -2257,7 +2271,7 @@ export default function App() {
       </main>
 
       {/* Disclaimer Section */}
-      <section className="w-full bg-slate-100 dark:bg-neutral-900/60 border-t border-slate-200 dark:border-neutral-800 py-6 text-center" id="footer-disclaimer">
+      <section className="w-full bg-slate-100 dark:bg-neutral-900/60 border-t border-slate-200 dark:border-neutral-800 py-6 text-center relative z-10" id="footer-disclaimer">
         <div className="max-w-4xl mx-auto px-4 space-y-2">
           <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400">Legal Disclaimer</span>
           <p className="text-[11px] text-gray-500 dark:text-neutral-400 leading-relaxed font-semibold max-w-2xl mx-auto">
@@ -2269,7 +2283,7 @@ export default function App() {
       {/* ---------------------------------------------------- */}
       {/* FOOTER BAR                                           */}
       {/* ---------------------------------------------------- */}
-      <footer className="w-full bg-white dark:bg-neutral-950 border-t border-slate-200 dark:border-neutral-900" id="main-footer-bottom">
+      <footer className="w-full bg-white dark:bg-neutral-950 border-t border-slate-200 dark:border-neutral-900 relative z-10" id="main-footer-bottom">
         <div className="max-w-6xl mx-auto px-4 py-8 grid md:grid-cols-3 gap-8 text-xs font-semibold text-gray-400 dark:text-neutral-500" id="footer-links-grid">
           <div className="space-y-2">
             <h4 className="font-display font-extrabold text-xs text-gray-950 dark:text-white tracking-tight uppercase">EZ Toolbox</h4>
