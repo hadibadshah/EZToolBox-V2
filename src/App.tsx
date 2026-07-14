@@ -233,7 +233,7 @@ const SvgAreaChart: React.FC<SvgAreaChartProps> = ({ data, color, title, yFormat
   );
 };
 
-// 5 Network tools data
+// 4 Network tools data
 const NETWORK_TOOLS: FreeTool[] = [
   {
     name: "EZ QR Code Generator",
@@ -264,14 +264,6 @@ const NETWORK_TOOLS: FreeTool[] = [
     icon: "Palette",
     url: "https://color.eztoolbox.xyz",
     colorClass: "bg-amber-500",
-    comingSoon: true
-  },
-  {
-    name: "EZ Universal Converter",
-    description: "Convert media files, spreadsheets, formats, units, and custom system encodings.",
-    icon: "RefreshCw",
-    url: "https://convert.eztoolbox.xyz",
-    colorClass: "bg-rose-500",
     comingSoon: true
   }
 ];
@@ -742,9 +734,10 @@ export default function App() {
   };
 
   // Analyze Video API Call with client fallback
-  const handleAnalyzeVideo = async (e?: React.FormEvent) => {
+  const handleAnalyzeVideo = async (e?: React.FormEvent, customUrl?: string) => {
     if (e) e.preventDefault();
-    if (!videoUrlInput.trim()) {
+    const targetUrl = customUrl || videoUrlInput;
+    if (!targetUrl.trim()) {
       setError("Please enter a valid YouTube Video URL or ID.");
       return;
     }
@@ -756,7 +749,7 @@ export default function App() {
     const activeKey = apiKey.trim() || "AIzaSyAEUmPIRFmLVR4D4DhnYrpGsdrr9uZG3-I";
 
     try {
-      const urlParam = encodeURIComponent(videoUrlInput.trim());
+      const urlParam = encodeURIComponent(targetUrl.trim());
       const keyParam = `&key=${encodeURIComponent(activeKey)}`;
       
       const response = await fetch(`/api/youtube/video?url=${urlParam}${keyParam}`);
@@ -765,7 +758,7 @@ export default function App() {
         // Fallback to direct client-side fetching if backend is a 404/5xx (e.g. Netlify static hosting)
         if (response.status === 404 || response.status === 502 || response.status === 504) {
           console.log("Local server returned 404/5xx; falling back to client-side fetch...");
-          const clientData = await clientFetchVideo(videoUrlInput.trim(), activeKey);
+          const clientData = await clientFetchVideo(targetUrl.trim(), activeKey);
           setVideoData(clientData);
           return;
         }
@@ -778,7 +771,7 @@ export default function App() {
     } catch (err: any) {
       console.warn("Express proxy failed. Attempting client-side fetch fallback...", err);
       try {
-        const clientData = await clientFetchVideo(videoUrlInput.trim(), activeKey);
+        const clientData = await clientFetchVideo(targetUrl.trim(), activeKey);
         setVideoData(clientData);
       } catch (fallbackErr: any) {
         console.error("Client fallback fetch failed:", fallbackErr);
@@ -789,10 +782,17 @@ export default function App() {
     }
   };
 
+  // Load default video and channel on mount to showcase analytics and thumbnails nicely
+  useEffect(() => {
+    handleAnalyzeVideo(undefined, "https://www.youtube.com/watch?v=dIl_x9GNmG8");
+    handleAnalyzeChannel(undefined, "https://www.youtube.com/@ChroniclesReborn-736");
+  }, []);
+
   // Analyze Channel API Call with client fallback
-  const handleAnalyzeChannel = async (e?: React.FormEvent) => {
+  const handleAnalyzeChannel = async (e?: React.FormEvent, customUrl?: string) => {
     if (e) e.preventDefault();
-    if (!channelUrlInput.trim()) {
+    const targetUrl = customUrl || channelUrlInput;
+    if (!targetUrl.trim()) {
       setError("Please enter a YouTube Channel handle, name, URL, or Channel ID.");
       return;
     }
@@ -804,7 +804,7 @@ export default function App() {
     const activeKey = apiKey.trim() || "AIzaSyAEUmPIRFmLVR4D4DhnYrpGsdrr9uZG3-I";
 
     try {
-      const urlParam = encodeURIComponent(channelUrlInput.trim());
+      const urlParam = encodeURIComponent(targetUrl.trim());
       const keyParam = `&key=${encodeURIComponent(activeKey)}`;
 
       const response = await fetch(`/api/youtube/channel?url=${urlParam}${keyParam}`);
@@ -813,7 +813,7 @@ export default function App() {
         // Fallback to direct client-side fetching if backend is 404/5xx (e.g. Netlify static hosting)
         if (response.status === 404 || response.status === 502 || response.status === 504) {
           console.log("Local server returned 404/5xx; falling back to client-side fetch...");
-          const clientData = await clientFetchChannel(channelUrlInput.trim(), activeKey);
+          const clientData = await clientFetchChannel(targetUrl.trim(), activeKey);
           setChannelData(clientData);
           return;
         }
@@ -826,7 +826,7 @@ export default function App() {
     } catch (err: any) {
       console.warn("Express proxy failed. Attempting client-side fetch fallback...", err);
       try {
-        const clientData = await clientFetchChannel(channelUrlInput.trim(), activeKey);
+        const clientData = await clientFetchChannel(targetUrl.trim(), activeKey);
         setChannelData(clientData);
       } catch (fallbackErr: any) {
         console.error("Client fallback fetch failed:", fallbackErr);
@@ -1264,7 +1264,7 @@ export default function App() {
           >
             <div className="pl-3 flex items-center text-gray-400 dark:text-neutral-500 pointer-events-none" id="input-decorator-icon">
               {activeTab === "video" ? (
-                <Youtube className="h-5 w-5" />
+                <Youtube className="h-5 w-5 text-red-600 dark:text-red-500 fill-red-600 dark:fill-red-500" />
               ) : (
                 <Search className="h-5 w-5" />
               )}
@@ -1282,7 +1282,7 @@ export default function App() {
               }}
               placeholder={
                 activeTab === "video" 
-                  ? "Paste YouTube Video URL or ID (e.g., dQw4w9WgXcQ)..." 
+                  ? "Paste YouTube Video URL (e.g., https://www.youtube.com/watch?v=dIl_x9GNmG8)..." 
                   : "Paste YouTube Channel URL, handle, or name (e.g., @mrbeast)..."
               }
               className="flex-grow bg-transparent text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none font-medium px-2 py-2"
@@ -1387,8 +1387,8 @@ export default function App() {
         {loading && (
           <div className="max-w-4xl mx-auto flex flex-col items-center justify-center py-16" id="loading-skeleton">
             <div className="relative mb-6">
-              <div className="h-16 w-16 rounded-full border-4 border-emerald-100 border-t-emerald-600 dark:border-neutral-800 dark:border-t-emerald-500 animate-spin" />
-              <Youtube className="h-6 w-6 text-emerald-600 dark:text-emerald-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              <div className="h-16 w-16 rounded-full border-4 border-red-100 border-t-red-600 dark:border-neutral-800 dark:border-t-red-500 animate-spin" />
+              <Youtube className="h-6 w-6 text-red-600 dark:text-red-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
             </div>
             <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 animate-pulse">
               Communicating with YouTube Data API servers...
@@ -2139,29 +2139,29 @@ export default function App() {
           {/* Upper Banner Placement */}
           <AdsterraBanner adKey={adsterraBannerKey} enabled={adsEnabled} />
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3" id="network-tools-grid">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5" id="network-tools-grid">
             {NETWORK_TOOLS.map((tool, index) => {
               if (tool.comingSoon) {
                 return (
                   <div
                     key={index}
-                    className="p-4 bg-slate-50/50 border border-slate-200 dark:bg-neutral-900/40 dark:border-neutral-800/80 rounded-xl flex flex-col justify-between relative overflow-hidden"
+                    className="p-5 md:p-6 bg-slate-50 border border-slate-200 dark:bg-neutral-900/40 dark:border-neutral-800/80 rounded-xl flex flex-col justify-between relative overflow-hidden shadow-sm hover:shadow-md transition-all"
                   >
                     <div>
-                      <span className="absolute top-2.5 right-2.5 text-[8px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30">
+                      <span className="absolute top-3.5 right-3.5 text-[9px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30">
                         Coming Soon
                       </span>
-                      <div className={`${tool.colorClass} opacity-60 h-8 w-8 rounded-lg flex items-center justify-center mb-3 shrink-0 shadow-sm`} id={`tool-icon-wrapper-${index}`}>
+                      <div className={`${tool.colorClass} opacity-70 h-10 w-10 rounded-xl flex items-center justify-center mb-4 shrink-0 shadow-sm`} id={`tool-icon-wrapper-${index}`}>
                         {renderIconComponent(tool.icon)}
                       </div>
-                      <h4 className="font-display font-bold text-xs text-gray-500 dark:text-neutral-400">
+                      <h4 className="font-display font-bold text-sm md:text-base text-gray-500 dark:text-neutral-400">
                         {tool.name}
                       </h4>
-                      <p className="text-[10px] text-gray-400 dark:text-neutral-500 mt-1 leading-snug font-medium">
+                      <p className="text-xs text-gray-400 dark:text-neutral-500 mt-1.5 leading-relaxed font-medium">
                         {tool.description}
                       </p>
                     </div>
-                    <div className="mt-3 flex items-center text-[9px] text-gray-400 dark:text-neutral-500 font-bold uppercase tracking-wider gap-1">
+                    <div className="mt-4 flex items-center text-[10px] text-gray-400 dark:text-neutral-500 font-bold uppercase tracking-wider gap-1.5">
                       Under Construction
                     </div>
                   </div>
@@ -2171,28 +2171,28 @@ export default function App() {
               return (
                 <a
                   href={tool.url}
-                key={index}
-                target="_blank"
-                rel="noreferrer"
-                className="group p-4 bg-white border border-slate-200 dark:bg-neutral-900 dark:border-neutral-800 rounded-xl flex flex-col justify-between hover:border-emerald-500 dark:hover:border-emerald-500 transition-all hover:shadow-sm hover:emerald-glow cursor-pointer relative overflow-hidden"
-              >
-                <div>
-                  <div className={`${tool.colorClass} h-8 w-8 rounded-lg flex items-center justify-center mb-3 shrink-0 shadow-sm`} id={`tool-icon-wrapper-${index}`}>
-                    {renderIconComponent(tool.icon)}
+                  key={index}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group p-5 md:p-6 bg-white border border-slate-200 dark:bg-neutral-900 dark:border-neutral-800 rounded-xl flex flex-col justify-between hover:border-emerald-500 dark:hover:border-emerald-500 transition-all hover:shadow-md hover:emerald-glow cursor-pointer relative overflow-hidden"
+                >
+                  <div>
+                    <div className={`${tool.colorClass} h-10 w-10 rounded-xl flex items-center justify-center mb-4 shrink-0 shadow-sm`} id={`tool-icon-wrapper-${index}`}>
+                      {renderIconComponent(tool.icon)}
+                    </div>
+                    <h4 className="font-display font-bold text-sm md:text-base text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                      {tool.name}
+                    </h4>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 leading-relaxed font-medium">
+                      {tool.description}
+                    </p>
                   </div>
-                  <h4 className="font-display font-bold text-xs text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                    {tool.name}
-                  </h4>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1 leading-snug font-medium">
-                    {tool.description}
-                  </p>
-                </div>
-                <div className="mt-3 flex items-center text-[9px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider gap-1">
-                  Launch App <ExternalLink className="h-3 w-3" />
-                </div>
-              </a>
-            );
-          })}
+                  <div className="mt-4 flex items-center text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider gap-1.5">
+                    Launch App <ExternalLink className="h-3.5 w-3.5" />
+                  </div>
+                </a>
+              );
+            })}
           </div>
         </section>
 
