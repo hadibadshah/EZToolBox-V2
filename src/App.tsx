@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Pages } from "./components/Pages";
+import { Adsterra160x600 } from "./components/Adsterra160x600";
+import { Adsterra320x50 } from "./components/Adsterra320x50";
+import { AdsterraNative } from "./components/AdsterraNative";
 import { 
   Youtube, 
   Search, 
@@ -515,65 +518,7 @@ async function clientFetchChannel(url: string, keyToUse: string): Promise<Channe
   };
 }
 
-// Adsterra Banner Component for perfect SPA / Hostinger integration
-interface AdsterraBannerProps {
-  adKey: string;
-  enabled: boolean;
-  width?: number;
-  height?: number;
-}
 
-function AdsterraBanner({ adKey, enabled, width = 728, height = 90 }: AdsterraBannerProps) {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (!enabled || !adKey || !containerRef.current) {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = "";
-      }
-      return;
-    }
-
-    // Reset container contents
-    containerRef.current.innerHTML = "";
-
-    const container = containerRef.current;
-    
-    // Create script 1 for atOptions configuration
-    const script1 = document.createElement("script");
-    script1.type = "text/javascript";
-    script1.innerHTML = `
-      var atOptions = {
-        'key' : '${adKey}',
-        'format' : 'iframe',
-        'height' : ${height},
-        'width' : ${width},
-        'params' : {}
-      };
-    `;
-    container.appendChild(script1);
-
-    // Create script 2 for loading the ad format code
-    const script2 = document.createElement("script");
-    script2.type = "text/javascript";
-    script2.src = `https://www.highperformanceformat.com/${adKey}/invoke.js`;
-    container.appendChild(script2);
-
-    return () => {
-      if (container) {
-        container.innerHTML = "";
-      }
-    };
-  }, [enabled, adKey, width, height]);
-
-  if (!enabled || !adKey) return null;
-
-  return (
-    <div className="flex items-center justify-center my-6 max-w-4xl mx-auto overflow-hidden">
-      <div ref={containerRef} className="adsterra-banner-container min-h-[90px] w-full flex items-center justify-center overflow-x-auto" />
-    </div>
-  );
-}
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<"video" | "channel">("video");
@@ -660,31 +605,36 @@ export default function App() {
     return localStorage.getItem("yt_adsterra_social_bar_url") || "https://pl30252585.effectivecpmnetwork.com/94/47/9b/94479bdb2acf4104d1a18b7942b19b96.js";
   });
 
-  // Dynamically inject/remove Adsterra Social Bar script
+  // Dynamically inject/remove Adsterra Social Bar script (Desktop only to prevent blocking mobile header/clicks)
   useEffect(() => {
-    if (!adsEnabled || !adsterraSocialBarUrl) {
-      const existing = document.getElementById("adsterra-social-bar");
-      if (existing) {
-        document.body.removeChild(existing);
+    const handleSocialBar = () => {
+      const isLargeScreen = window.innerWidth >= 1024; // Only load on screen widths of 1024px or above (Desktop)
+
+      if (!adsEnabled || !adsterraSocialBarUrl || !isLargeScreen) {
+        const existing = document.getElementById("adsterra-social-bar");
+        if (existing) {
+          document.body.removeChild(existing);
+        }
+        return;
       }
-      return;
-    }
 
-    // Clean up any existing script to avoid duplicates on state change
-    const oldScript = document.getElementById("adsterra-social-bar");
-    if (oldScript) {
-      document.body.removeChild(oldScript);
-    }
+      // Inject if it doesn't exist
+      const oldScript = document.getElementById("adsterra-social-bar");
+      if (!oldScript) {
+        const script = document.createElement("script");
+        script.src = adsterraSocialBarUrl;
+        script.type = "text/javascript";
+        script.async = true;
+        script.id = "adsterra-social-bar";
+        document.body.appendChild(script);
+      }
+    };
 
-    const script = document.createElement("script");
-    script.src = adsterraSocialBarUrl;
-    script.type = "text/javascript";
-    script.async = true;
-    script.id = "adsterra-social-bar";
-    
-    document.body.appendChild(script);
+    handleSocialBar();
+    window.addEventListener("resize", handleSocialBar);
 
     return () => {
+      window.removeEventListener("resize", handleSocialBar);
       const existing = document.getElementById("adsterra-social-bar");
       if (existing) {
         document.body.removeChild(existing);
@@ -936,6 +886,15 @@ export default function App() {
         {/* Right Side: Soft and rich modern mesh gradient glowing orbs */}
         <div className="absolute top-1/4 right-0 w-[600px] h-[600px] rounded-full bg-red-500/[0.07] dark:bg-red-500/[0.05] blur-[130px] translate-x-1/3" />
         <div className="absolute top-3/4 right-0 w-[500px] h-[500px] rounded-full bg-emerald-500/[0.06] dark:bg-emerald-500/[0.04] blur-[120px] translate-x-1/2" />
+      </div>
+
+      {/* Floating Skyscraper Sidebars - Fixed & Hidden on viewports below 2xl */}
+      <div className="hidden 2xl:block fixed left-4 top-[180px] z-30" id="adsterra-skyscraper-left">
+        <Adsterra160x600 id="floating-sidebar-left" enabled={adsEnabled} />
+      </div>
+
+      <div className="hidden 2xl:block fixed right-4 top-[180px] z-30" id="adsterra-skyscraper-right">
+        <Adsterra160x600 id="floating-sidebar-right" enabled={adsEnabled} />
       </div>
       
       {/* ---------------------------------------------------- */}
@@ -1364,6 +1323,11 @@ export default function App() {
               </>
             )}
           </div>
+        </div>
+
+        {/* Responsive Mobile Banner placement - displayed below search card on mobile viewports */}
+        <div className="block 2xl:hidden my-6 text-center" id="global-upper-mobile-banner">
+          <Adsterra320x50 id="global-upper" enabled={adsEnabled} />
         </div>
 
         {/* ---------------------------------------------------- */}
@@ -2150,9 +2114,6 @@ export default function App() {
             </p>
           </div>
 
-          {/* Upper Banner Placement */}
-          <AdsterraBanner adKey={adsterraBannerKey} enabled={adsEnabled} />
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5" id="network-tools-grid">
             {NETWORK_TOOLS.map((tool, index) => {
               if (tool.comingSoon) {
@@ -2210,6 +2171,9 @@ export default function App() {
           </div>
         </section>
 
+        {/* Native Recommendation Feed Placement - Styled perfectly for both desktop and mobile */}
+        <AdsterraNative id="bottom-native" enabled={adsEnabled} />
+
         {/* ---------------------------------------------------- */}
         {/* FAQ ACCORDION                                        */}
         {/* ---------------------------------------------------- */}
@@ -2261,12 +2225,13 @@ export default function App() {
           </div>
         </section>
 
-        {/* Bottom Banner Placement */}
-        <AdsterraBanner adKey={adsterraBannerKey} enabled={adsEnabled} />
-
           </>
         ) : (
-          <Pages currentPage={currentPage} setCurrentPage={setCurrentPage} />
+          <>
+            <Pages currentPage={currentPage} setCurrentPage={setCurrentPage} />
+            {/* Native Recommendation Feed Placement for other pages and articles */}
+            <AdsterraNative id="pages-bottom-native" enabled={adsEnabled} />
+          </>
         )}
       </main>
 

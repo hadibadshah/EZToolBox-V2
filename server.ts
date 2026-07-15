@@ -409,6 +409,43 @@ async function startServer() {
     }
   });
 
+  // Explicit, high-priority routes for Google Search Console and SEO crawlers
+  app.get("/sitemap.xml", (req, res) => {
+    const distFile = path.join(process.cwd(), "dist", "sitemap.xml");
+    const publicFile = path.join(process.cwd(), "public", "sitemap.xml");
+    const targetFile = fs.existsSync(distFile) ? distFile : publicFile;
+
+    if (fs.existsSync(targetFile)) {
+      res.setHeader("Content-Type", "application/xml");
+      return res.sendFile(targetFile);
+    }
+    return res.status(404).send("Sitemap not found");
+  });
+
+  app.get("/robots.txt", (req, res) => {
+    const distFile = path.join(process.cwd(), "dist", "robots.txt");
+    const publicFile = path.join(process.cwd(), "public", "robots.txt");
+    const targetFile = fs.existsSync(distFile) ? distFile : publicFile;
+
+    if (fs.existsSync(targetFile)) {
+      res.setHeader("Content-Type", "text/plain");
+      return res.sendFile(targetFile);
+    }
+    return res.status(404).send("Robots.txt not found");
+  });
+
+  app.get("/googleb53210ff3f96f54d.html", (req, res) => {
+    const distFile = path.join(process.cwd(), "dist", "googleb53210ff3f96f54d.html");
+    const publicFile = path.join(process.cwd(), "public", "googleb53210ff3f96f54d.html");
+    const targetFile = fs.existsSync(distFile) ? distFile : publicFile;
+
+    if (fs.existsSync(targetFile)) {
+      res.setHeader("Content-Type", "text/html");
+      return res.sendFile(targetFile);
+    }
+    return res.status(404).send("Verification file not found");
+  });
+
   // Serve static assets in production or use Vite middleware in development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
