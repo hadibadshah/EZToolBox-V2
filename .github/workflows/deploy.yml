@@ -1,4 +1,4 @@
-name: Deploy to Hostinger
+name: Deploy Main Site to Hostinger
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
 
     - name: Install and Build
       run: |
-        npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+        npm install --legacy-peer-deps
         npm run build
 
     - name: Sync Files to Hostinger (FTP)
@@ -29,5 +29,6 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
+        port: 21
         local-dir: ./dist/
         server-dir: /
