@@ -23,3 +23,24 @@
     display: none;
   }
 }
+
+:root {
+  --dot-color-grey: rgba(148, 163, 184, 0.45);
+  --dot-color-green: rgba(16, 185, 129, 0.4);
+  --dot-color-red: rgba(239, 68, 68, 0.4);
+}
+
+.dark {
+  --dot-color-grey: rgba(71, 85, 105, 0.35);
+  --dot-color-green: rgba(52, 211, 153, 0.3);
+  --dot-color-red: rgba(248, 113, 113, 0.3);
+}
+
+@utility premium-multi-dots {
+  background-image: 
+    radial-gradient(circle, var(--dot-color-grey) 1.5px, transparent 1.5px),
+    radial-gradient(circle, var(--dot-color-green) 1.5px, transparent 1.5px),
+    radial-gradient(circle, var(--dot-color-red) 1.5px, transparent 1.5px);
+  background-size: 80px 80px;
+  background-position: 0px 0px, 27px 27px, 54px 54px;
+}

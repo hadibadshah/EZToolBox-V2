@@ -926,8 +926,8 @@ export default function App() {
       
       {/* Master Website Background Layer (Full-screen decorative layout) */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none" id="global-website-background">
-        {/* Full screen micro-dot matrix pattern - elegant premium dots with wider 80px spacing */}
-        <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1.5px,transparent_1.5px)] dark:bg-[radial-gradient(#475569_1.5px,transparent_1.5px)] [background-size:80px_80px] opacity-60 dark:opacity-45" />
+        {/* Full screen micro-dot matrix pattern - elegant premium dots in green, red, and grey with wider 80px spacing */}
+        <div className="absolute inset-0 premium-multi-dots opacity-90" />
         
         {/* Left Side: Soft and rich modern mesh gradient glowing orbs */}
         <div className="absolute top-1/12 left-0 w-[500px] h-[500px] rounded-full bg-emerald-500/[0.07] dark:bg-emerald-500/[0.05] blur-[120px] -translate-x-1/3" />
