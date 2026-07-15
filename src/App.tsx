@@ -386,7 +386,7 @@ function parseISO8601Duration(duration: string): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-// Direct client fetch fallback for video data (e.g. for Netlify static deployments)
+// Direct client fetch fallback for video data (e.g. for Hostinger static deployments)
 async function clientFetchVideo(url: string, keyToUse: string): Promise<VideoData> {
   const videoId = extractVideoId(url);
   if (!videoId) {
@@ -433,7 +433,7 @@ async function clientFetchVideo(url: string, keyToUse: string): Promise<VideoDat
   };
 }
 
-// Direct client fetch fallback for channel analytics (e.g. for Netlify static deployments)
+// Direct client fetch fallback for channel analytics (e.g. for Hostinger static deployments)
 async function clientFetchChannel(url: string, keyToUse: string): Promise<ChannelData> {
   const parsed = parseChannelInput(url);
   let channelDetails: any = null;
@@ -515,7 +515,7 @@ async function clientFetchChannel(url: string, keyToUse: string): Promise<Channe
   };
 }
 
-// Adsterra Banner Component for perfect SPA / Netlify integration
+// Adsterra Banner Component for perfect SPA / Hostinger integration
 interface AdsterraBannerProps {
   adKey: string;
   enabled: boolean;
@@ -704,7 +704,7 @@ export default function App() {
       })
       .catch(err => {
         console.warn("Backend configuration endpoint not available. Falling back to built-in client-side API engine.", err);
-        // On static hosting like Netlify, set hasServerKey to true because we have the pre-loaded fallback key active!
+        // On static hosting like Hostinger, set hasServerKey to true because we have the pre-loaded fallback key active!
         setHasServerKey(true);
       });
   }, []);
@@ -755,7 +755,7 @@ export default function App() {
       const response = await fetch(`/api/youtube/video?url=${urlParam}${keyParam}`);
       
       if (!response.ok) {
-        // Fallback to direct client-side fetching if backend is a 404/5xx (e.g. Netlify static hosting)
+        // Fallback to direct client-side fetching if backend is a 404/5xx (e.g. Hostinger static hosting)
         if (response.status === 404 || response.status === 502 || response.status === 504) {
           console.log("Local server returned 404/5xx; falling back to client-side fetch...");
           const clientData = await clientFetchVideo(targetUrl.trim(), activeKey);
@@ -810,7 +810,7 @@ export default function App() {
       const response = await fetch(`/api/youtube/channel?url=${urlParam}${keyParam}`);
       
       if (!response.ok) {
-        // Fallback to direct client-side fetching if backend is 404/5xx (e.g. Netlify static hosting)
+        // Fallback to direct client-side fetching if backend is 404/5xx (e.g. Hostinger static hosting)
         if (response.status === 404 || response.status === 502 || response.status === 504) {
           console.log("Local server returned 404/5xx; falling back to client-side fetch...");
           const clientData = await clientFetchChannel(targetUrl.trim(), activeKey);
@@ -882,7 +882,7 @@ export default function App() {
       console.warn("Proxy download failed, trying direct browser download", err);
     }
 
-    // Direct browser fallback if proxy endpoint fails or returns error (e.g., on Netlify drag-and-drop)
+    // Direct browser fallback if proxy endpoint fails or returns error (e.g., on Hostinger static deployments)
     try {
       const res = await fetch(url, { mode: "cors" });
       const blob = await res.blob();
