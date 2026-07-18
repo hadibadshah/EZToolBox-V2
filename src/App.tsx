@@ -4,6 +4,8 @@ import { Adsterra160x600 } from "./components/Adsterra160x600";
 import { Adsterra320x50 } from "./components/Adsterra320x50";
 import { AdsterraNative } from "./components/AdsterraNative";
 import { QrGenerator } from "./components/QrGenerator";
+import { ImageCompressor } from "./components/ImageCompressor";
+import { IpFinder } from "./components/IpFinder";
 import { 
   Youtube, 
   Search, 
@@ -237,7 +239,7 @@ const SvgAreaChart: React.FC<SvgAreaChartProps> = ({ data, color, title, yFormat
   );
 };
 
-// 4 Network tools data
+// Network tools data
 const NETWORK_TOOLS: FreeTool[] = [
   {
     name: "EZ QR Code Generator",
@@ -259,8 +261,7 @@ const NETWORK_TOOLS: FreeTool[] = [
     description: "Optimize and compress PNG, JPG, WebP, and SVG images with perfect quality retention.",
     icon: "Sliders",
     url: "https://compress.eztoolbox.xyz",
-    colorClass: "bg-purple-500",
-    comingSoon: true
+    colorClass: "bg-purple-500"
   },
   {
     name: "EZ Color Palette Generator",
@@ -269,6 +270,13 @@ const NETWORK_TOOLS: FreeTool[] = [
     url: "https://color.eztoolbox.xyz",
     colorClass: "bg-amber-500",
     comingSoon: true
+  },
+  {
+    name: "EZ IP & Location Finder",
+    description: "Instantly check your public IP address, detect country location, trace map, and test ping latency.",
+    icon: "Globe",
+    url: "https://ip.eztoolbox.xyz",
+    colorClass: "bg-indigo-500"
   }
 ];
 
@@ -315,6 +323,52 @@ const QR_FAQ_ITEMS: FAQItem[] = [
   {
     question: "Can I download my customized QR Code in vector SVG format?",
     answer: "Yes! Once you are happy with your custom QR colors, size, margins, and layouts, you can download it as a standard high-resolution PNG image, or click the 'SVG' button to download a pristine vector file. Vector SVGs are perfect for print banners, brochures, flyers, and business cards because they scale infinitely without losing quality."
+  }
+];
+
+const COMPRESS_FAQ_ITEMS: FAQItem[] = [
+  {
+    question: "How does the EZ Image Compressor work and is it safe?",
+    answer: "Our image compressor runs 100% locally in your browser using high-performance Canvas APIs. No files are uploaded to remote servers, ensuring 100% data security, privacy, and speed."
+  },
+  {
+    question: "Which image formats are supported?",
+    answer: "We support all major web formats, including PNG, JPEG/JPG, WebP, and SVG images. You can compress multiple files in bulk and convert them between formats."
+  },
+  {
+    question: "What is the difference between lossy and lossless compression?",
+    answer: "Lossy compression reduces file size by discarding minor visual details, yielding tiny file sizes (perfect for web optimization). Lossless compression retains 100% original pixel data but results in larger file sizes. Our tool lets you adjust the compression quality to find the perfect balance."
+  },
+  {
+    question: "Can I use compressed images for Google PageSpeed optimization?",
+    answer: "Absolutely! Compressing images reduces page weight, improving your Google PageSpeed Insights core web vitals (LCP/FCP), leading to significantly higher SEO search engine rankings."
+  },
+  {
+    question: "Is there a file size limit or daily quota?",
+    answer: "No! Since all compression is executed client-side on your device, there are zero size limits, zero queues, and zero daily compression limits. It is completely free forever."
+  }
+];
+
+const IP_FAQ_ITEMS: FAQItem[] = [
+  {
+    question: "How does the EZ IP & Location Finder detect my public IP address?",
+    answer: "Our tool queries highly secure global IP registries via client-side API requests when the page loads. It instantly retrieves your active IPv4 or IPv6 public routing address, matching it against public allocation block databases to identify your estimated location, ISP provider, and ASN information."
+  },
+  {
+    question: "How accurate is the location pinpointed on the interactive map?",
+    answer: "IP geolocation is designed to estimate your location at the country, region, or city level with extremely high accuracy (99% for countries, 85%+ for cities). It does not pinpoint your physical street address or GPS location, thereby safeguarding your exact household privacy while providing necessary geographical data."
+  },
+  {
+    question: "Can I lookup geographic location coordinates for other IP addresses?",
+    answer: "Yes! Simply type any valid IPv4 or IPv6 address into the lookup search bar above, and click 'Geolocate IP'. The tool queries public registry registries to instantly retrieve estimated geographic data, ISP networks, and map tracing for that target address."
+  },
+  {
+    question: "What is an Autonomous System Number (ASN) and why is it shown?",
+    answer: "An Autonomous System Number (ASN) is a unique identifier allocated to large network operators and Internet Service Providers (ISPs) that participate in the internet's global routing infrastructure. Showing the ASN lets network professionals trace data packet owners and check routing properties."
+  },
+  {
+    question: "How does the connection ping test measure latency?",
+    answer: "Our built-in Ping diagnostics tool triggers rapid, real-time client-side requests directly to global cloud server CDNs (like Cloudflare and Google). It calculates the precise round-trip duration in milliseconds (ms), giving you an accurate benchmark of your active ISP connection speed and latency."
   }
 ];
 
@@ -546,28 +600,52 @@ async function clientFetchChannel(url: string, keyToUse: string): Promise<Channe
 
 export default function App() {
   // Automatic Subdomain & Domain detection
-  const [subdomainView, setSubdomainView] = useState<"yt" | "qr">(() => {
+  const [subdomainView, setSubdomainView] = useState<"yt" | "qr" | "compress" | "ip">(() => {
     const hostname = window.location.hostname.toLowerCase();
     if (hostname.includes("qr.eztoolbox.xyz") || hostname.includes("qr.")) {
       return "qr";
     }
+    if (hostname.includes("compress.eztoolbox.xyz") || hostname.includes("compress.")) {
+      return "compress";
+    }
+    if (hostname.includes("ip.eztoolbox.xyz") || hostname.includes("ip.")) {
+      return "ip";
+    }
     return "yt";
   });
 
-  const currentNetworkTools = subdomainView === "qr"
-    ? [
-        {
-          name: "EZ YouTube Analytics Engine",
-          description: "Analyze channel subscriber growth, check monetization status, and download high-res thumbnails instantly.",
-          icon: "Youtube",
-          url: "https://eztoolbox.xyz",
-          colorClass: "bg-red-500"
-        },
-        ...NETWORK_TOOLS.slice(1)
-      ]
-    : NETWORK_TOOLS;
+  const currentNetworkTools: FreeTool[] = (() => {
+    const ytTool: FreeTool = {
+      name: "EZ YouTube Analytics Engine",
+      description: "Analyze channel subscriber growth, check monetization status, and download high-res thumbnails instantly.",
+      icon: "Youtube",
+      url: "https://eztoolbox.xyz",
+      colorClass: "bg-red-500"
+    };
+    const qrTool = NETWORK_TOOLS[0];
+    const pdfTool = NETWORK_TOOLS[1];
+    const compressTool = NETWORK_TOOLS[2];
+    const colorTool = NETWORK_TOOLS[3];
+    const ipTool = NETWORK_TOOLS[4];
 
-  const currentFaqItems = subdomainView === "qr" ? QR_FAQ_ITEMS : FAQ_ITEMS;
+    if (subdomainView === "yt") {
+      return [qrTool, compressTool, ipTool, pdfTool, colorTool];
+    } else if (subdomainView === "qr") {
+      return [ytTool, compressTool, ipTool, pdfTool, colorTool];
+    } else if (subdomainView === "compress") {
+      return [ytTool, qrTool, ipTool, pdfTool, colorTool];
+    } else { // ip
+      return [ytTool, qrTool, compressTool, pdfTool, colorTool];
+    }
+  })();
+
+  const currentFaqItems = subdomainView === "qr" 
+    ? QR_FAQ_ITEMS 
+    : subdomainView === "compress"
+      ? COMPRESS_FAQ_ITEMS
+      : subdomainView === "ip"
+        ? IP_FAQ_ITEMS
+        : FAQ_ITEMS;
 
   // Check if running in development sandbox environment (e.g. AI Studio preview)
   const isDevelopment = (() => {
@@ -635,6 +713,10 @@ export default function App() {
     else {
       if (subdomainView === "qr") {
         suffix = "EZ Toolbox — Free Custom QR Code Generator & Scanner (With Logos)";
+      } else if (subdomainView === "compress") {
+        suffix = "EZ Toolbox — Free Bulk Image Compressor (PNG, JPG, WebP, SVG)";
+      } else if (subdomainView === "ip") {
+        suffix = "EZ Toolbox — What Is My IP & Geolocation Location Finder";
       } else {
         suffix = "EZ Toolbox — YouTube Analyzer & Downloader (High-Res Thumbnails)";
       }
@@ -941,14 +1023,16 @@ export default function App() {
   };
 
   // Helper to render network icons
-  const renderIconComponent = (iconName: string) => {
+  const renderIconComponent = (iconName: string, className = "h-6 w-6 text-white") => {
     switch (iconName) {
-      case "QrCode": return <QrCode className="h-6 w-6 text-white" id="icon-qr" />;
-      case "FileText": return <FileText className="h-6 w-6 text-white" id="icon-pdf" />;
-      case "Sliders": return <Sliders className="h-6 w-6 text-white" id="icon-compress" />;
-      case "Palette": return <Palette className="h-6 w-6 text-white" id="icon-color" />;
-      case "RefreshCw": return <RefreshCw className="h-6 w-6 text-white" id="icon-convert" />;
-      default: return <Grid className="h-6 w-6 text-white" id="icon-default" />;
+      case "QrCode": return <QrCode className={className} id="icon-qr" />;
+      case "FileText": return <FileText className={className} id="icon-pdf" />;
+      case "Sliders": return <Sliders className={className} id="icon-compress" />;
+      case "Palette": return <Palette className={className} id="icon-color" />;
+      case "RefreshCw": return <RefreshCw className={className} id="icon-convert" />;
+      case "Globe": return <Globe className={className} id="icon-globe" />;
+      case "Youtube": return <Youtube className={className} id="icon-youtube" />;
+      default: return <Grid className={className} id="icon-default" />;
     }
   };
 
@@ -974,27 +1058,47 @@ export default function App() {
             <span>⚙️ AI Studio Developer Sandbox Mode</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[11px] text-emerald-100 hidden sm:inline">Choose Domain Preview:</span>
-            <div className="flex bg-emerald-700 p-0.5 rounded-lg border border-emerald-500/30">
+            <span className="text-[11px] text-emerald-100 hidden lg:inline">Choose Domain Preview:</span>
+            <div className="flex bg-emerald-700 p-0.5 rounded-lg border border-emerald-500/30 overflow-x-auto max-w-full">
               <button
                 onClick={() => setSubdomainView("yt")}
-                className={`px-3 py-1 rounded-md text-[11px] transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md text-[11px] transition-all cursor-pointer shrink-0 ${
                   subdomainView === "yt"
                     ? "bg-white text-emerald-800 shadow-sm"
                     : "text-emerald-100 hover:text-white"
                 }`}
               >
-                eztoolbox.xyz (YT Engine)
+                eztoolbox (YT Engine)
               </button>
               <button
                 onClick={() => setSubdomainView("qr")}
-                className={`px-3 py-1 rounded-md text-[11px] transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-md text-[11px] transition-all cursor-pointer shrink-0 ${
                   subdomainView === "qr"
                     ? "bg-white text-emerald-800 shadow-sm"
                     : "text-emerald-100 hover:text-white"
                 }`}
               >
-                qr.eztoolbox.xyz (QR Gen)
+                qr (QR Gen)
+              </button>
+              <button
+                onClick={() => setSubdomainView("compress")}
+                className={`px-2.5 py-1 rounded-md text-[11px] transition-all cursor-pointer shrink-0 ${
+                  subdomainView === "compress"
+                    ? "bg-white text-emerald-800 shadow-sm"
+                    : "text-emerald-100 hover:text-white"
+                }`}
+              >
+                compress (Image Comp)
+              </button>
+              <button
+                onClick={() => setSubdomainView("ip")}
+                className={`px-2.5 py-1 rounded-md text-[11px] transition-all cursor-pointer shrink-0 ${
+                  subdomainView === "ip"
+                    ? "bg-white text-emerald-800 shadow-sm"
+                    : "text-emerald-100 hover:text-white"
+                }`}
+              >
+                ip (IP Geolocation)
               </button>
             </div>
           </div>
@@ -1037,6 +1141,10 @@ export default function App() {
             <div className="bg-emerald-600 dark:bg-emerald-500 p-2 rounded-xl text-white flex items-center justify-center shadow-sm" id="logo-badge">
               {subdomainView === "qr" ? (
                 <QrCode className="h-6 w-6" id="brand-qrcode-icon" />
+              ) : subdomainView === "compress" ? (
+                <Sliders className="h-6 w-6" id="brand-compress-icon" />
+              ) : subdomainView === "ip" ? (
+                <Globe className="h-6 w-6" id="brand-ip-icon" />
               ) : (
                 <Youtube className="h-6 w-6" id="brand-youtube-icon" />
               )}
@@ -1047,11 +1155,11 @@ export default function App() {
                   EZ Toolbox
                 </span>
                 <span className="text-sm px-1.5 py-0.5 bg-gray-100 dark:bg-neutral-800 text-gray-600 dark:text-gray-400 font-mono rounded font-medium" id="brand-utility-logo">
-                  {subdomainView === "qr" ? "🎯" : "🛠️"}
+                  {subdomainView === "qr" ? "🎯" : subdomainView === "compress" ? "⚡" : subdomainView === "ip" ? "🌐" : "🛠️"}
                 </span>
               </div>
               <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wide uppercase" id="brand-subtext">
-                {subdomainView === "qr" ? "QR Generator & Scanner" : "YT Analytics Engine"}
+                {subdomainView === "qr" ? "QR Generator & Scanner" : subdomainView === "compress" ? "Bulk Image Compressor" : subdomainView === "ip" ? "What is My IP & Location" : "YT Analytics Engine"}
               </p>
             </div>
           </div>
@@ -1314,6 +1422,10 @@ export default function App() {
           <>
             {subdomainView === "qr" ? (
               <QrGenerator adsEnabled={adsEnabled} />
+            ) : subdomainView === "compress" ? (
+              <ImageCompressor adsEnabled={adsEnabled} />
+            ) : subdomainView === "ip" ? (
+              <IpFinder adsEnabled={adsEnabled} />
             ) : (
               <>
         
@@ -2257,30 +2369,30 @@ export default function App() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5" id="network-tools-grid">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3" id="network-tools-grid">
             {currentNetworkTools.map((tool, index) => {
               if (tool.comingSoon) {
                 return (
                   <div
                     key={index}
-                    className="p-5 md:p-6 bg-slate-50 border border-slate-200 dark:bg-neutral-900/40 dark:border-neutral-800/80 rounded-xl flex flex-col justify-between relative overflow-hidden shadow-sm hover:shadow-md transition-all"
+                    className="p-4 md:p-4.5 bg-slate-50 border border-slate-200 dark:bg-neutral-900/40 dark:border-neutral-800/80 rounded-xl flex flex-col justify-between relative overflow-hidden shadow-xs hover:shadow-sm transition-all animate-fade-in"
                   >
                     <div>
-                      <span className="absolute top-3.5 right-3.5 text-[9px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30">
-                        Coming Soon
+                      <span className="absolute top-2.5 right-2.5 text-[8px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30">
+                        Soon
                       </span>
-                      <div className={`${tool.colorClass} opacity-70 h-10 w-10 rounded-xl flex items-center justify-center mb-4 shrink-0 shadow-sm`} id={`tool-icon-wrapper-${index}`}>
-                        {renderIconComponent(tool.icon)}
+                      <div className={`${tool.colorClass} opacity-70 h-8 w-8 rounded-lg flex items-center justify-center mb-3 shrink-0 shadow-xs`} id={`tool-icon-wrapper-${index}`}>
+                        {renderIconComponent(tool.icon, "h-4 w-4 text-white")}
                       </div>
-                      <h4 className="font-display font-bold text-sm md:text-base text-gray-500 dark:text-neutral-400">
+                      <h4 className="font-display font-bold text-xs md:text-sm text-gray-400 dark:text-neutral-500">
                         {tool.name}
                       </h4>
-                      <p className="text-xs text-gray-400 dark:text-neutral-500 mt-1.5 leading-relaxed font-medium">
+                      <p className="text-[11px] text-gray-400 dark:text-neutral-500 mt-1 leading-snug font-medium">
                         {tool.description}
                       </p>
                     </div>
-                    <div className="mt-4 flex items-center text-[10px] text-gray-400 dark:text-neutral-500 font-bold uppercase tracking-wider gap-1.5">
-                      Under Construction
+                    <div className="mt-3 flex items-center text-[9px] text-gray-400 dark:text-neutral-500 font-bold uppercase tracking-wider gap-1">
+                      In Dev
                     </div>
                   </div>
                 );
@@ -2292,21 +2404,21 @@ export default function App() {
                   key={index}
                   target="_blank"
                   rel="noreferrer"
-                  className="group p-5 md:p-6 bg-white border border-slate-200 dark:bg-neutral-900 dark:border-neutral-800 rounded-xl flex flex-col justify-between hover:border-emerald-500 dark:hover:border-emerald-500 transition-all hover:shadow-md hover:emerald-glow cursor-pointer relative overflow-hidden"
+                  className="group p-4 md:p-4.5 bg-white border border-slate-200 dark:bg-neutral-900 dark:border-neutral-800 rounded-xl flex flex-col justify-between hover:border-emerald-500 dark:hover:border-emerald-500 transition-all hover:shadow-sm hover:emerald-glow cursor-pointer relative overflow-hidden animate-fade-in"
                 >
                   <div>
-                    <div className={`${tool.colorClass} h-10 w-10 rounded-xl flex items-center justify-center mb-4 shrink-0 shadow-sm`} id={`tool-icon-wrapper-${index}`}>
-                      {renderIconComponent(tool.icon)}
+                    <div className={`${tool.colorClass} h-8 w-8 rounded-lg flex items-center justify-center mb-3 shrink-0 shadow-xs`} id={`tool-icon-wrapper-${index}`}>
+                      {renderIconComponent(tool.icon, "h-4 w-4 text-white")}
                     </div>
-                    <h4 className="font-display font-bold text-sm md:text-base text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    <h4 className="font-display font-bold text-xs md:text-sm text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                       {tool.name}
                     </h4>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 leading-relaxed font-medium">
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 leading-snug font-medium">
                       {tool.description}
                     </p>
                   </div>
-                  <div className="mt-4 flex items-center text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider gap-1.5">
-                    Launch App <ExternalLink className="h-3.5 w-3.5" />
+                  <div className="mt-3 flex items-center text-[9px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider gap-1 group-hover:translate-x-0.5 transition-transform">
+                    Launch App <ExternalLink className="h-3 w-3" />
                   </div>
                 </a>
               );
@@ -2326,7 +2438,15 @@ export default function App() {
               Frequently Asked Questions
             </h2>
             <p className="text-[11px] md:text-xs text-gray-400 dark:text-gray-500 mt-1 font-semibold">
-              {subdomainView === "qr" ? "Find answers to common questions about our custom QR Code generator and scanner." : "Find answers to common questions about using EZ Toolbox YouTube analyzer."}
+              {subdomainView === "qr" ? (
+                "Find answers to common questions about our custom QR Code generator and scanner."
+              ) : subdomainView === "compress" ? (
+                "Find answers to common questions about our free bulk image compressor."
+              ) : subdomainView === "ip" ? (
+                "Find answers to common questions about our public IP & location geolocation finder."
+              ) : (
+                "Find answers to common questions about using EZ Toolbox YouTube analyzer."
+              )}
             </p>
           </div>
 

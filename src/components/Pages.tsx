@@ -4,7 +4,7 @@ import { ArrowLeft, Mail, Phone, ExternalLink, Shield, FileText, Info, BookOpen,
 interface PagesProps {
   currentPage: "about" | "contact" | "privacy" | "terms" | "articles";
   setCurrentPage: (page: "home" | "about" | "contact" | "privacy" | "terms" | "articles") => void;
-  subdomainView?: "yt" | "qr";
+  subdomainView?: "yt" | "qr" | "compress" | "ip";
 }
 
 export const Pages: React.FC<PagesProps> = ({ currentPage, setCurrentPage, subdomainView = "yt" }) => {
@@ -17,6 +17,14 @@ export const Pages: React.FC<PagesProps> = ({ currentPage, setCurrentPage, subdo
     if (path.includes("/articles/how-to-create-custom-qr-codes-with-logo-branding")) return 4;
     if (path.includes("/articles/offline-to-online-marketing-qr-codes-guide")) return 5;
     if (path.includes("/articles/qr-code-formats-static-dynamic-vcard-security")) return 6;
+    // Compress Articles
+    if (path.includes("/articles/bulk-image-compression-google-pagespeed-seo")) return 7;
+    if (path.includes("/articles/webp-vs-png-jpg-ultimate-web-performance-guide")) return 8;
+    if (path.includes("/articles/browser-based-image-compression-privacy-speed")) return 9;
+    // IP Articles
+    if (path.includes("/articles/what-is-my-ip-address-ipv4-vs-ipv6")) return 10;
+    if (path.includes("/articles/ip-geolocation-accuracy-gps-wifi-mapping")) return 11;
+    if (path.includes("/articles/understanding-internet-isps-asns-routing")) return 12;
     return null;
   };
 
@@ -294,7 +302,242 @@ Follow these safety rules to protect your device:
     }
   ];
 
-  const articles = subdomainView === "qr" ? qrArticles : youtubeArticles;
+  const compressArticles = [
+    {
+      id: 7,
+      title: "Bulk Image Compression for Google PageSpeed Optimization & Core Web Vitals",
+      summary: "Unlock outstanding search rankings by optimizing LCP and FCP metrics. Learn how bulk image compression removes unnecessary megabytes while retaining visual clarity.",
+      slug: "bulk-image-compression-google-pagespeed-seo",
+      keywords: "bulk image compressor, google pagespeed optimization, core web vitals, LCP FCP, speed up website, SEO image optimizer",
+      date: "July 16, 2026",
+      readTime: "7 min read",
+      content: `### Why Page Speed is the Ultimate Ranking Signal in 2026
+
+When a user clicks on your website from a Google search query, you have less than 2.5 seconds to display your primary contents. If your site takes longer to load, over 53% of mobile visitors will bounce back to the search results. Google explicitly penalizes slow-loading websites by dropping their rankings in favor of faster competitors.
+
+At the core of page loading speed are two critical metrics monitored by Google PageSpeed Insights:
+1. **Largest Contentful Paint (LCP)**: Time taken to render the largest visible element (usually a hero image or banner).
+2. **First Contentful Paint (FCP)**: Time taken to show the first piece of document content.
+
+Unoptimized images are responsible for over **90% of page loading delays** on modern websites. In this guide, we will explore how bulk image compression can supercharge your site's SEO.
+
+---
+
+### Understanding the Impact of Bulk Image Compression
+
+When you photograph an item with a high-resolution smartphone or DSLR camera, the file is often saved between 4MB and 12MB. While this is great for high-quality printing, it is disastrous for web performance.
+
+Our professional **EZ Image Compressor** lets you drop multiple large images at once, bulk compressing them by up to 90% without visible pixelation. 
+
+By shrinking a folder of 50MB files down to just 2MB:
+* **Server Bandwidth Drainage Drops**: Saves host subscription costs.
+* **Core Web Vitals Pass Successfully**: Keeps Google algorithms happy.
+* **Conversion Rates Spike**: Fast pages convert up to 3x better than slow ones.
+
+---
+
+### Step-by-Step Guide: Compressing Images for Web Optimization
+
+1. **Collect Your Raw Assets**: Gather all PNG screenshots, JPEG banners, and WebP product listings.
+2. **Access EZ Image Compressor**: Visit our bulk compressor subdomain at **compress.eztoolbox.xyz**.
+3. **Select Compression Quality**: We recommend **80%** as the golden ratio. It retains perfect visual fidelity while discarding microscopic metadata.
+4. **Choose Resizing Bounds**: If your camera photo is 4000px wide, scale it down to **1920px (Full HD)** or **1280px (HD)**.
+5. **Optimize and Download**: Press **Optimize Images** and download the completed files individually or in bulk.`
+    },
+    {
+      id: 8,
+      title: "WebP vs. PNG & JPG: The Ultimate Image Format Comparison for Modern Web Performance",
+      summary: "Explore the technical differences between modern next-gen image formats and legacy formats to choose the best configuration for your website.",
+      slug: "webp-vs-png-jpg-ultimate-web-performance-guide",
+      keywords: "webp vs png vs jpg, convert to webp, next gen image format, lossy vs lossless compression, transparency alpha channel, speed up page loading",
+      date: "July 10, 2026",
+      readTime: "6 min read",
+      content: `### Demystifying Web Image Formats
+
+Choosing the wrong file format for your graphic assets can result in bloated websites and blurry graphics. Understanding the difference between JPEG, PNG, and next-generation formats like WebP is crucial for any developer or digital marketer.
+
+In this comparative analysis, we will look at how each format works and why converting legacy files is the ultimate optimization hack.
+
+---
+
+### Legacy Formats: JPEG and PNG
+
+* **JPEG/JPG (Joint Photographic Experts Group)**:
+  * *Compression Type*: Lossy.
+  * *Best Used For*: Complex, colorful photographs and realistic gradients.
+  * *Pros*: Small file sizes when compressed.
+  * *Cons*: Does not support transparent backgrounds (Alpha channel) and degrades in quality on repeated saves.
+
+* **PNG (Portable Network Graphics)**:
+  * *Compression Type*: Lossless.
+  * *Best Used For*: Line drawings, text overlays, screenshots, and logos requiring transparency.
+  * *Pros*: Supports perfect transparency and maintains sharp borders around text.
+  * *Cons*: File sizes can be extremely large, especially for high-resolution graphics.
+
+---
+
+### Next-Gen Format: The Power of WebP
+
+Developed by Google, **WebP** is a modern next-generation image format designed to replace both JPEG and PNG.
+
+WebP offers:
+1. **Superior Lossless Compression**: WebP lossless images are **26% smaller** than equivalent PNGs.
+2. **Outstanding Lossy Compression**: WebP lossy images are **25% to 34% smaller** than equivalent JPEGs with comparable quality.
+3. **Alpha Channel Support**: WebP supports transparent backgrounds in both lossy and lossless modes!
+
+*Tip: Using the EZ Image Compressor format dropdown, you can select 'Convert All to WebP' to dynamically transcode your PNGs and JPEGs during compression. This ensures your web assets are fully future-proof and load instantly!*`
+    },
+    {
+      id: 9,
+      title: "How Browser-Based Image Compressors Protect Your Data Privacy & Guarantee Security",
+      summary: "Discover why local-first browser-based utility tools are safer than traditional cloud-hosted compressors that upload your files to remote database servers.",
+      slug: "browser-based-image-compression-privacy-speed",
+      keywords: "browser based image compressor, data privacy security, local first utility, zero remote uploads, safe file conversion, private compressor",
+      date: "July 1, 2026",
+      readTime: "5 min read",
+      content: `### The Hidden Risks of Cloud-Based Online Converters
+
+When you use popular online image converters, you are asked to drag your files into their browser boxes. Most users do not realize that these platforms actually **upload your physical files** to their remote cloud servers to process them.
+
+This introduces several serious data privacy risks:
+1. **Sensitive Data Exposure**: Screenshots of internal financial dashboards, personal documents, or sensitive family photos are stored on third-party servers.
+2. **Data Scraping & Mining**: Some shady free services mine your uploaded graphics or sell analytics metadata.
+3. **Security Vulnerabilities**: Remote servers are susceptible to data breaches, exposing your catalog files.
+
+---
+
+### The Local-First Solution: How EZ Toolbox Keeps You Secure
+
+At **EZ Toolbox**, we reject the cloud-upload model entirely. Our **EZ Image Compressor** is designed as a **local-first browser utility**.
+
+Here is how our client-side technology ensures 100% data security:
+* **Canvas API Operations**: All pixel decoding, resizing, and encoding are performed locally on your device's processor using HTML5 Canvas sandboxed APIs.
+* **Zero Remote Uploads**: Your files are never transferred over the internet. You can even disconnect your internet completely after the page loads and the compressor will continue working flawlessly!
+* **Zero Registration or Account Creep**: We do not collect email addresses, sign-ups, or login sessions, eliminating the risk of data compromise.
+
+By keeping image optimization localized, you enjoy instant processing speeds (no waiting for uploads or download queues) and absolute peace of mind.`
+    }
+  ];
+
+  const ipArticles = [
+    {
+      id: 10,
+      title: "What is My IP Address? Understanding the Differences Between IPv4 & IPv6",
+      summary: "Explore the technical foundations of internet protocols. Learn the critical structural differences, address capacities, and security features of IPv4 vs. IPv6.",
+      slug: "what-is-my-ip-address-ipv4-vs-ipv6",
+      keywords: "what is my ip address, ipv4 vs ipv6 differences, public ip address, internet protocol, subnet mask, trace ipv4 address, network adapter",
+      date: "July 17, 2026",
+      readTime: "6 min read",
+      content: `### The Fundamentals of Internet Protocols
+
+An IP (Internet Protocol) address is a unique numerical sequence assigned to every device connected to a computer network. Just like a physical home address ensures your mail reaches the correct door, an IP address ensures that packets of data find their correct destination across the global web.
+
+Currently, two versions of the Internet Protocol coexist: **IPv4** and **IPv6**. In this guidebook, we will dive into what makes them different and why the world is transitioning to the newer protocol.
+
+---
+
+### IPv4: The Legacy Standard
+
+Introduced in 1983 by ARPANET, **IPv4** remains the most widely recognized IP address format. 
+
+* **Structure**: A 32-bit address space, written in dot-decimal notation (e.g., \`8.8.8.8\`). It consists of four octets separated by dots, each decimal ranging from 0 to 255.
+* **Address Capacity**: It supports exactly **4.29 billion** unique addresses (\`2^32\`).
+* **The IPv4 Exhaustion Crisis**: In the 1980s, four billion addresses seemed infinite. However, with the explosion of smartphones, IoT devices, smart TVs, and cloud servers, the global pool of unallocated public IPv4 addresses was officially exhausted in 2011.
+
+---
+
+### IPv6: The Future-Proof Solution
+
+To solve the address depletion crisis, the Internet Engineering Task Force (IETF) designed **IPv6**.
+
+* **Structure**: A 128-bit address space, represented in hexadecimal notation separated by colons (e.g., \`2001:4860:4860::8888\`).
+* **Address Capacity**: It supports **340 undecillion** unique addresses (\`2^128\`). This is a number so astronomical that every grain of sand on Earth could be allocated trillions of unique IP addresses!
+* **Built-in Security**: IPv6 was designed with IPSec (Internet Protocol Security) support as a native requirement, facilitating secure end-to-end encryption.
+
+Using our free **EZ IP & Location Finder**, you can instantly check whether your current ISP connection is routing you through a traditional IPv4 address or a next-generation IPv6 address with a single tap!`
+    },
+    {
+      id: 11,
+      title: "How Accurate is IP Geolocation? Inside GPS, Wi-Fi, and ISP Database Mapping",
+      summary: "Understand how geolocation engines estimate your physical city and country. Discover the accuracy limits, privacy boundaries, and mechanics of IP routing registers.",
+      slug: "ip-geolocation-accuracy-gps-wifi-mapping",
+      keywords: "ip geolocation accuracy, find my location, trace coordinates, cell tower triangulation, wi-fi positioning system, MaxMind IP registry database, coordinate tracing",
+      date: "July 12, 2026",
+      readTime: "5 min read",
+      content: `### How Web Apps Estimate Your Physical Location
+
+When you load a website like **EZ Toolbox** and see your city and country instantly displayed on a map, no satellite GPS is actively querying your device's chips. Instead, the system relies on a technology known as **IP Geolocation**.
+
+But how does checking a series of numbers like \`103.45.12.19\` translate to a dot on a map? Let's peel back the layers of digital location tracking.
+
+---
+
+### The Mechanics of IP Geolocation Databases
+
+IP addresses are not distributed at random. They are allocated in massive sequential blocks to Internet Service Providers (ISPs) by Regional Internet Registries (RIRs) like ARIN, RIPE, and APNIC.
+
+Specialized lookup databases (such as MaxMind, DB-IP, and IPinfo) index these registry allocations, matching IP ranges with geographic properties:
+1. **Country & Continent Level**: Over **99% accurate**. It is virtually impossible to disguise your country of origin without using a VPN proxy.
+2. **City & Region Level**: Around **80% to 90% accurate**. The database matches your IP to your ISP's nearest central routing exchange or local hub, which might be a few miles away from your actual home.
+3. **Street Coordinate Level**: Extremely low accuracy. IP databases do **NOT** know your physical house or apartment number. The latitude and longitude coordinates returned are simply the geographic center point of your city or ZIP code.
+
+---
+
+### GPS vs. Wi-Fi Positioning vs. IP Geolocation
+
+To understand the spectrum of digital mapping, look at the three main location techniques:
+* **Satellite GPS**: Decodes radio signals from orbital satellites. Accuracy: **3 to 10 meters**. Requires direct line of sight.
+* **Wi-Fi Positioning System (WPS)**: Triangulates nearby Wi-Fi MAC addresses in public router indexes. Accuracy: **10 to 50 meters**. Works indoors.
+* **IP Geolocation**: Queries global registry databases based on network traffic hops. Accuracy: **500 meters to 10 kilometers**. Requires zero hardware permissions.
+
+Our tool utilizes secure database registries to pull your estimated location instantly, map it via open-source OpenStreetMap APIs, and safeguard your actual, physical house-level privacy.`
+    },
+    {
+      id: 12,
+      title: "Understanding Internet Service Providers (ISPs), ASNs, and Global Packet Routing",
+      summary: "Learn how data packets navigate the backbone of the internet. Demystify Autonomous System Numbers (ASNs) and how your ISP connects you to global servers.",
+      slug: "understanding-internet-isps-asns-routing",
+      keywords: "internet service provider, ASN lookup, autonomous system number, data packet routing, internet backbone, border gateway protocol, ping latency test",
+      date: "July 5, 2026",
+      readTime: "7 min read",
+      content: `### The Internet Backbone: A Network of Networks
+
+The internet is not a single cloud. It is a massive, interconnected tapestry of over 70,000 independent networks. These networks—ranging from local university hubs and corporate networks to massive commercial Internet Service Providers (ISPs) like Comcast, AT&T, and PTCL—interconnect to trade traffic.
+
+How do billions of devices coordinate data transfers across this global maze without collapsing into chaos? The answer lies in **ASNs** and **BGP Routing**.
+
+---
+
+### What is an Autonomous System Number (ASN)?
+
+An **Autonomous System (AS)** is a collection of connected IP routing prefixes controlled by a single administrative entity (like an ISP, a government, or a massive tech company like Google).
+
+To participate in global routing, each Autonomous System is assigned a unique identifier called an **Autonomous System Number (ASN)**. For example:
+* **AS15169**: Assigned to Google LLC.
+* **AS16509**: Assigned to Amazon.com.
+* **AS13335**: Assigned to Cloudflare.
+
+When you perform a lookup on the **EZ IP Finder**, you will notice a field named "Registry ASN". This indicates the exact ASN governing your current connection.
+
+---
+
+### How Packets Travel: The Border Gateway Protocol (BGP)
+
+Data packets do not take a straight path. They hop through routers from one Autonomous System to another.
+
+The decision of which path to take is made dynamically by the **Border Gateway Protocol (BGP)**. BGP acts like a real-time GPS for data packets, choosing the most efficient, cost-effective, and active network hops to route your queries across the globe in milliseconds.
+
+If you experience high load times, it is usually because BGP is routing your traffic through heavily congested hops. By running our integrated **Ping Connection Diagnostics** tool, you can check your live connection latencies directly to major global networks in real-time!`
+    }
+  ];
+
+  const articles = subdomainView === "qr" 
+    ? qrArticles 
+    : subdomainView === "compress" 
+      ? compressArticles 
+      : subdomainView === "ip"
+        ? ipArticles
+        : youtubeArticles;
 
   return (
     <div className="space-y-8" id="seo-pages-container">
