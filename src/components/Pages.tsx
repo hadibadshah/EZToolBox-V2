@@ -4,13 +4,19 @@ import { ArrowLeft, Mail, Phone, ExternalLink, Shield, FileText, Info, BookOpen,
 interface PagesProps {
   currentPage: "about" | "contact" | "privacy" | "terms" | "articles";
   setCurrentPage: (page: "home" | "about" | "contact" | "privacy" | "terms" | "articles") => void;
+  subdomainView?: "yt" | "qr";
 }
 
-export const Pages: React.FC<PagesProps> = ({ currentPage, setCurrentPage }) => {
+export const Pages: React.FC<PagesProps> = ({ currentPage, setCurrentPage, subdomainView = "yt" }) => {
   const getArticleIdFromPath = (path: string): number | null => {
+    // YouTube Articles
     if (path.includes("/articles/youtube-tag-extractor-seo-optimization")) return 1;
     if (path.includes("/articles/youtube-monetization-cpm-rates-country")) return 2;
     if (path.includes("/articles/social-blade-alternative-track-subscriber-growth")) return 3;
+    // QR Articles
+    if (path.includes("/articles/how-to-create-custom-qr-codes-with-logo-branding")) return 4;
+    if (path.includes("/articles/offline-to-online-marketing-qr-codes-guide")) return 5;
+    if (path.includes("/articles/qr-code-formats-static-dynamic-vcard-security")) return 6;
     return null;
   };
 
@@ -40,7 +46,7 @@ export const Pages: React.FC<PagesProps> = ({ currentPage, setCurrentPage }) => 
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const articles = [
+  const youtubeArticles = [
     {
       id: 1,
       title: "How to Use a YouTube Tag Extractor for SEO Optimization & Rank Videos Fast",
@@ -185,6 +191,110 @@ With **EZ Toolbox**, we automatically calculate your daily analytics history, ch
 By auditing these statistics weekly, you can fine-tune your content calendar, pivot away from low-performing topics, and double-down on high-velocity content formats.`
     }
   ];
+
+  const qrArticles = [
+    {
+      id: 4,
+      title: "How to Create Custom QR Codes with Embedded Logos for Professional Branding",
+      summary: "Discover how incorporating visual logos, custom brand colors, and aesthetic style patterns into QR codes can boost scan rates by up to 200%.",
+      slug: "how-to-create-custom-qr-codes-with-logo-branding",
+      keywords: "Custom QR Code Generator with logo, brand QR code, free qr generator, custom colors qr, high resolution qr code, boost scan rate",
+      date: "July 12, 2026",
+      readTime: "6 min read",
+      content: `### Why Custom branded QR Codes are the Standard in 2026
+
+Are you still using basic, generic black-and-white square QR codes? If so, you are missing out on a massive branding opportunity. In a digital-first economy, consumers hesitate to scan anonymous codes out of security concerns. Integrating your company logo and matching color themes builds instantaneous trust.
+
+Studies show that custom styled QR codes with embedded brand marks receive up to **200% more scans** than standard industrial templates. In this guide, we will show you how to leverage EZ Toolbox to craft gorgeous, high-trust codes for free.
+
+---
+
+### Choosing the Right Error Correction Level (ECL) for Logo Overlays
+
+When you overlay an image or logo over the center of a QR code, you are technically obstructing a portion of its data grid. To ensure the code remains 100% readable, you must use high error-resilience settings:
+
+* **Level L (Low)**: Reclaims up to 7% of missing data. (Do NOT use with logos).
+* **Level M (Medium)**: Reclaims up to 15%. (Acceptable for tiny icons).
+* **Level H (High)**: Reclaims up to 30% of lost data.
+
+*Tip: EZ Toolbox QR Generator automatically locks error correction to Level H whenever you upload or select a brand logo preset. This ensures your code scans flawlessly even if 30% of its center is covered by your logo!*
+
+---
+
+### Best Practices for Designing Scannable, Aesthetic QR Codes
+
+1. **Maintain High Contrast**: Always use a dark color for the foreground blocks (the pixels) and a very light color for the background. Placing a light green foreground on a white background is a recipe for scanning failures.
+2. **Quiet Zone Margins**: Leave a clear padding margin around the outer borders of your QR code (normally Level 2 or above). This helps mobile camera lenses recognize where the matrix starts.
+3. **Use Vector Formats for Print**: If you plan to print your branded QR code on brochures, roll-up banners, or retail store packaging, always download the vector **SVG format** from our download panel. SVGs scale infinitely without blurring!`
+    },
+    {
+      id: 5,
+      title: "The Ultimate Guide to Offline-to-Online (O2O) Marketing with QR Code Analytics",
+      summary: "Learn how modern businesses utilize QR Codes on print flyers, business cards, and product packaging to seamlessly bridge offline customers to online websites.",
+      slug: "offline-to-online-marketing-qr-codes-guide",
+      keywords: "O2O marketing, QR code marketing strategy, print flyers qr code, scan vcard, offline online advertising, business card qr code, free qr scanner",
+      date: "July 8, 2026",
+      readTime: "8 min read",
+      content: `### Bridging the Physical and Digital Worlds with O2O Workflows
+
+For years, offline advertising (billboards, print catalogs, business cards, physical product tags) suffered from attribution problems. It was nearly impossible to measure the exact return on investment (ROI) of a printed newspaper ad.
+
+The **Offline-to-Online (O2O)** marketing movement completely resolves this by placing tailored QR codes directly onto physical print assets. When a consumer scans the card, they are instantly whisked to your digital checkout page, newsletter registration, or contact profile.
+
+---
+
+### Five Highly Effective O2O QR Campaign Templates
+
+1. **Digital Business Cards (vCards)**: Instead of handing out paper cards that end up in the trash, display a vCard QR code on your phone or print a single card. Scanning it instantly populates your name, company, email, phone number, and address directly into the client's phone book.
+2. **App Store App Promotion**: If you have a mobile application, generate a single QR code directing to iOS App Store or Google Play Store, making app acquisition frictionless.
+3. **Wi-Fi Network Access**: Retailers, hotels, and cafes can display a custom Wi-Fi QR code. Customers scan it to connect to the store internet instantly without typing complicated alphanumeric passwords.
+4. **Social Media Multi-Links**: Lead physical customers to your social media ecosystem (Instagram, TikTok, Facebook) using customized profile QR codes.
+5. **Direct Payments (UPI / PayPal)**: Display direct checkout codes on restaurant tables or invoices, letting customers settle bills digitally via standard UPI or PayPal.Me pathways.`
+    },
+    {
+      id: 6,
+      title: "Understanding QR Code Formats: Static vs Dynamic, vCard Protocols, and Scan Security",
+      summary: "Explore the technical foundations of QR codes, difference between permanent static formats and editable dynamic tracks, and security guidelines for scanning unknown codes.",
+      slug: "qr-code-formats-static-dynamic-vcard-security",
+      keywords: "static vs dynamic qr codes, scan security, qr code security, vcard protocol, wifi qr code format, online qr scanner webcam, free secure qr",
+      date: "July 2, 2026",
+      readTime: "5 min read",
+      content: `### Inside the Matrix: How QR Code Formats Actually Store Data
+
+Quick Response (QR) codes are two-dimensional barcodes that encode information both horizontally and vertically. This allows them to store up to **7,089 numeric characters**—hundreds of times more data than traditional linear barcodes.
+
+However, the way data is formatted defines its final utility and security. In this technical overview, we will demystify common protocols and look at how secure client-side tools protect you.
+
+---
+
+### Static vs. Dynamic QR Codes: Which is Best?
+
+* **Static QR Codes (Permanent)**: 
+  * *How they work*: The raw data (e.g., website URL, phone number, text) is encoded directly into the pixel layout.
+  * *Pros*: 100% permanent, never expires, completely free, and requires no central redirection servers.
+  * *Cons*: If you make a typo in the URL or need to update your link, you must reprint a new QR code.
+
+* **Dynamic QR Codes (Editable)**:
+  * *How they work*: The QR code encodes a short redirect link pointing to a proxy server, which then forwards the visitor to the final URL.
+  * *Pros*: You can change the destination URL anytime without reprinting the code.
+  * *Cons*: If the redirect service goes out of business, your QR code stops working instantly. Many services charge expensive monthly subscription fees.
+
+*EZ Toolbox produces premium static QR codes. This ensures your codes are 100% permanent, free from tracking scripts, and completely secure for lifetime usage!*
+
+---
+
+### Crucial Security Guidelines for Scanning Unknown Codes
+
+Because QR codes are visual matrices, humans cannot "read" where a code links before scanning it. Malicious actors have occasionally covered public codes with redirecting stickers (a practice called *Quishing*).
+
+Follow these safety rules to protect your device:
+1. **Never scan anonymous codes** in suspicious public locations.
+2. **Use a Secure Preview Scanner**: Avoid using camera apps that open links automatically. Use the **EZ Toolbox QR Code Scanner**! Our tool shows you the raw decoded text or link *before* you click to open it, letting you verify the domain address and proceed with 100% confidence.
+3. **Inspect the QR Code Texture**: Ensure there are no stickers pasted over the original printed QR code on public stands.`
+    }
+  ];
+
+  const articles = subdomainView === "qr" ? qrArticles : youtubeArticles;
 
   return (
     <div className="space-y-8" id="seo-pages-container">

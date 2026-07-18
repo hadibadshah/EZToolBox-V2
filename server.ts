@@ -469,12 +469,21 @@ async function startServer() {
 
         let html = fs.readFileSync(indexPath, "utf-8");
         const reqPath = req.path;
+        const host = req.hostname.toLowerCase();
+        const isQrSubdomain = host.includes("qr.eztoolbox.xyz") || host.includes("qr.");
 
         // Default Meta Tags (Home Page)
         let title = "EZ Toolbox 🛠️ — YouTube Analyzer & Thumbnail Downloader";
         let description = "Analyze any YouTube video or channel instantly. Get views, upload date, tags, channel ranking, category, estimated earnings, and download thumbnails in HD for free!";
         let keywords = "youtube analyzer, youtube thumbnail downloader, youtube tags viewer, download youtube thumbnails hd, ez toolbox, free youtube tools";
         let url = `https://eztoolbox.xyz${reqPath}`;
+
+        if (isQrSubdomain) {
+          title = "EZ QR Code 🎯 — Free Custom QR Code Generator & Scanner";
+          description = "Generate custom high-resolution QR codes with your own brand logo, foreground/background colors, and styling presets. Decode and scan QR codes from image files or webcam streams for free!";
+          keywords = "qr code generator, free qr generator, custom qr code with logo, qr scanner online, scan qr code, ez qr code, ez toolbox";
+          url = `https://qr.eztoolbox.xyz${reqPath}`;
+        }
 
         // Match pages and override metadata
         if (reqPath === "/about") {
@@ -511,6 +520,9 @@ async function startServer() {
           keywords = "Social Blade alternative, youtube channel analytics tool, daily subscriber growth tracker, estimate youtube earnings";
         }
 
+        const ogImage = isQrSubdomain ? "https://qr.eztoolbox.xyz/assets/og-image.png" : "https://eztoolbox.xyz/assets/og-image.png";
+        const siteName = isQrSubdomain ? "EZ QR Code" : "EZ Toolbox";
+
         // Construct complete, standard SEO & Open Graph Tags for WhatsApp / Facebook
         const seoTags = `
     <!-- Primary SEO Meta Tags -->
@@ -518,7 +530,7 @@ async function startServer() {
     <meta name="title" content="${title}" />
     <meta name="description" content="${description}" />
     <meta name="keywords" content="${keywords}" />
-    <meta name="author" content="EZ Toolbox" />
+    <meta name="author" content="${siteName}" />
     <meta name="robots" content="index, follow" />
 
     <!-- Open Graph / Facebook / WhatsApp -->
@@ -526,17 +538,17 @@ async function startServer() {
     <meta property="og:url" content="${url}" />
     <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${description}" />
-    <meta property="og:image" content="https://eztoolbox.xyz/assets/og-image.png" />
+    <meta property="og:image" content="${ogImage}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:site_name" content="EZ Toolbox" />
+    <meta property="og:site_name" content="${siteName}" />
 
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="${url}" />
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />
-    <meta name="twitter:image" content="https://eztoolbox.xyz/assets/og-image.png" />
+    <meta name="twitter:image" content="${ogImage}" />
         `;
 
         // Replace the default title tag with the dynamically generated SEO tags block

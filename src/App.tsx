@@ -3,6 +3,7 @@ import { Pages } from "./components/Pages";
 import { Adsterra160x600 } from "./components/Adsterra160x600";
 import { Adsterra320x50 } from "./components/Adsterra320x50";
 import { AdsterraNative } from "./components/AdsterraNative";
+import { QrGenerator } from "./components/QrGenerator";
 import { 
   Youtube, 
   Search, 
@@ -294,6 +295,29 @@ const FAQ_ITEMS: FAQItem[] = [
   }
 ];
 
+const QR_FAQ_ITEMS: FAQItem[] = [
+  {
+    question: "How do I add an official brand logo to my custom QR Code?",
+    answer: "With EZ Toolbox, adding a logo is simple! Scroll to the 'Customization' section under 'Step 2', upload your own PNG/JPG file, or select one of our premium preset icons (like YouTube, WhatsApp, Facebook, or Spotify) with a single click. We generate high-resolution custom canvas frames with a high error correction rate (Level H) to ensure the code remains perfectly scannable even with a custom image in the center."
+  },
+  {
+    question: "Are these QR Codes static or dynamic?",
+    answer: "EZ Toolbox generates highly secure, premium static QR Codes. Static QR Codes embed the raw text, Wi-Fi configuration, or URL link directly into the matrix itself. Since there is no redirect server in between, these codes are 100% permanent, never expire, contain no hidden tracking redirects, and are completely free forever."
+  },
+  {
+    question: "Why did my scanned WhatsApp QR Code display incorrect numbers?",
+    answer: "Normally, if you input numbers with spaces, dashes, or a leading plus sign (+), some scanners might misinterpret the link. To resolve this, EZ Toolbox automatically cleanses your phone input, stripping non-digit symbols and correctly compiling a clean, standard international 'wa.me' format (e.g., wa.me/923017480809). This ensures 100% scanning trust and instant contact connection across all devices."
+  },
+  {
+    question: "How does the webcam QR scanner work and is it safe?",
+    answer: "Our QR Scanner uses standard HTML5 media APIs to process video frames locally in your browser. We integrate jsQR (a light, high-speed parsing library) to decode codes on-the-fly. No video feeds or scanned contents are ever sent to any remote server—it is 100% client-side, making it completely private and secure."
+  },
+  {
+    question: "Can I download my customized QR Code in vector SVG format?",
+    answer: "Yes! Once you are happy with your custom QR colors, size, margins, and layouts, you can download it as a standard high-resolution PNG image, or click the 'SVG' button to download a pristine vector file. Vector SVGs are perfect for print banners, brochures, flyers, and business cards because they scale infinitely without losing quality."
+  }
+];
+
 // Local YouTube category mapping for client fallback
 const YOUTUBE_CATEGORIES: Record<string, string> = {
   "1": "Film & Animation",
@@ -521,6 +545,42 @@ async function clientFetchChannel(url: string, keyToUse: string): Promise<Channe
 
 
 export default function App() {
+  // Automatic Subdomain & Domain detection
+  const [subdomainView, setSubdomainView] = useState<"yt" | "qr">(() => {
+    const hostname = window.location.hostname.toLowerCase();
+    if (hostname.includes("qr.eztoolbox.xyz") || hostname.includes("qr.")) {
+      return "qr";
+    }
+    return "yt";
+  });
+
+  const currentNetworkTools = subdomainView === "qr"
+    ? [
+        {
+          name: "EZ YouTube Analytics Engine",
+          description: "Analyze channel subscriber growth, check monetization status, and download high-res thumbnails instantly.",
+          icon: "Youtube",
+          url: "https://eztoolbox.xyz",
+          colorClass: "bg-red-500"
+        },
+        ...NETWORK_TOOLS.slice(1)
+      ]
+    : NETWORK_TOOLS;
+
+  const currentFaqItems = subdomainView === "qr" ? QR_FAQ_ITEMS : FAQ_ITEMS;
+
+  // Check if running in development sandbox environment (e.g. AI Studio preview)
+  const isDevelopment = (() => {
+    const hostname = window.location.hostname.toLowerCase();
+    return (
+      hostname === "localhost" ||
+      hostname.includes("127.0.0.1") ||
+      hostname.includes("ais-dev-") ||
+      hostname.includes("ais-pre-") ||
+      hostname.includes(".run.app")
+    );
+  })();
+
   const [activeTab, setActiveTab] = useState<"video" | "channel">("video");
   const [videoUrlInput, setVideoUrlInput] = useState("");
   const [channelUrlInput, setChannelUrlInput] = useState("");
@@ -563,6 +623,24 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
+
+  // Dynamically update document.title for seamless SEO indexing across main and subdomains
+  useEffect(() => {
+    let suffix = " | EZ Toolbox";
+    if (currentPage === "about") suffix = "About Us" + suffix;
+    else if (currentPage === "contact") suffix = "Contact Us" + suffix;
+    else if (currentPage === "privacy") suffix = "Privacy Policy" + suffix;
+    else if (currentPage === "terms") suffix = "Terms & Conditions" + suffix;
+    else if (currentPage === "articles") suffix = "SEO Articles & Guides" + suffix;
+    else {
+      if (subdomainView === "qr") {
+        suffix = "EZ Toolbox — Free Custom QR Code Generator & Scanner (With Logos)";
+      } else {
+        suffix = "EZ Toolbox — YouTube Analyzer & Downloader (High-Res Thumbnails)";
+      }
+    }
+    document.title = suffix;
+  }, [subdomainView, currentPage]);
   
   // App states
   const [videoData, setVideoData] = useState<VideoData | null>(null);
@@ -595,8 +673,19 @@ export default function App() {
 
   // Adsterra Monetization states
   const [adsEnabled, setAdsEnabled] = useState(() => {
+    // Check if running in development sandbox environment (e.g. AI Studio preview)
+    const hostname = window.location.hostname.toLowerCase();
+    const isDev = (
+      hostname === "localhost" ||
+      hostname.includes("127.0.0.1") ||
+      hostname.includes("ais-dev-") ||
+      hostname.includes("ais-pre-") ||
+      hostname.includes(".run.app")
+    );
+    if (isDev) return false; // Force disabled in developer preview mode to prevent click blocks & iframe overlays!
+
     const saved = localStorage.getItem("yt_ads_enabled");
-    return saved === null ? true : saved === "true";
+    return saved === null ? false : saved === "true"; // Default to false on first-load
   });
   const [adsterraBannerKey, setAdsterraBannerKey] = useState(() => {
     return localStorage.getItem("yt_adsterra_banner_key") || "7e08b74965e5580393a5461cede22083";
@@ -610,7 +699,7 @@ export default function App() {
     const handleSocialBar = () => {
       const isLargeScreen = window.innerWidth >= 1024; // Only load on screen widths of 1024px or above (Desktop)
 
-      if (!adsEnabled || !adsterraSocialBarUrl || !isLargeScreen) {
+      if (!adsEnabled || !adsterraSocialBarUrl || !isLargeScreen || isDevelopment) {
         const existing = document.getElementById("adsterra-social-bar");
         if (existing) {
           document.body.removeChild(existing);
@@ -874,6 +963,44 @@ export default function App() {
   return (
     <div className="min-h-screen font-sans bg-gray-50 text-gray-800 transition-colors duration-300 dark:bg-neutral-950 dark:text-gray-100 flex flex-col relative" id="app-root">
       
+      {/* ⚙️ Developer Preview Switcher - Only visible in development sandbox */}
+      {isDevelopment && (
+        <div className="w-full bg-emerald-600 text-white py-2 px-4 flex items-center justify-between text-xs font-bold border-b border-emerald-700 shadow-sm relative z-50 animate-fade-in" id="dev-switcher-bar">
+          <div className="flex items-center gap-2">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+            </span>
+            <span>⚙️ AI Studio Developer Sandbox Mode</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-emerald-100 hidden sm:inline">Choose Domain Preview:</span>
+            <div className="flex bg-emerald-700 p-0.5 rounded-lg border border-emerald-500/30">
+              <button
+                onClick={() => setSubdomainView("yt")}
+                className={`px-3 py-1 rounded-md text-[11px] transition-all cursor-pointer ${
+                  subdomainView === "yt"
+                    ? "bg-white text-emerald-800 shadow-sm"
+                    : "text-emerald-100 hover:text-white"
+                }`}
+              >
+                eztoolbox.xyz (YT Engine)
+              </button>
+              <button
+                onClick={() => setSubdomainView("qr")}
+                className={`px-3 py-1 rounded-md text-[11px] transition-all cursor-pointer ${
+                  subdomainView === "qr"
+                    ? "bg-white text-emerald-800 shadow-sm"
+                    : "text-emerald-100 hover:text-white"
+                }`}
+              >
+                qr.eztoolbox.xyz (QR Gen)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Master Website Background Layer (Full-screen decorative layout) */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none" id="global-website-background">
         {/* Full screen micro-dot matrix pattern - elegant premium dots in green, red, and grey with wider 80px spacing */}
@@ -908,14 +1035,24 @@ export default function App() {
             id="header-brand-container"
           >
             <div className="bg-emerald-600 dark:bg-emerald-500 p-2 rounded-xl text-white flex items-center justify-center shadow-sm" id="logo-badge">
-              <Youtube className="h-6 w-6" id="brand-youtube-icon" />
+              {subdomainView === "qr" ? (
+                <QrCode className="h-6 w-6" id="brand-qrcode-icon" />
+              ) : (
+                <Youtube className="h-6 w-6" id="brand-youtube-icon" />
+              )}
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-display font-bold text-lg tracking-tight text-gray-900 dark:text-white" id="brand-logo-text">EZ Toolbox</span>
-                <span className="text-sm px-1.5 py-0.5 bg-gray-100 dark:bg-neutral-800 text-gray-600 dark:text-gray-400 font-mono rounded font-medium" id="brand-utility-logo">🛠️</span>
+                <span className="font-display font-bold text-lg tracking-tight text-gray-900 dark:text-white" id="brand-logo-text">
+                  EZ Toolbox
+                </span>
+                <span className="text-sm px-1.5 py-0.5 bg-gray-100 dark:bg-neutral-800 text-gray-600 dark:text-gray-400 font-mono rounded font-medium" id="brand-utility-logo">
+                  {subdomainView === "qr" ? "🎯" : "🛠️"}
+                </span>
               </div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wide uppercase" id="brand-subtext">YT Analytics Engine</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wide uppercase" id="brand-subtext">
+                {subdomainView === "qr" ? "QR Generator & Scanner" : "YT Analytics Engine"}
+              </p>
             </div>
           </div>
  
@@ -1175,6 +1312,10 @@ export default function App() {
       <main className="flex-grow max-w-6xl w-full mx-auto px-4 py-8 relative z-10" id="main-content">
         {currentPage === "home" ? (
           <>
+            {subdomainView === "qr" ? (
+              <QrGenerator adsEnabled={adsEnabled} />
+            ) : (
+              <>
         
         {/* Title Display Area */}
         <div className="text-center mb-8" id="hero-title-section">
@@ -2100,6 +2241,8 @@ export default function App() {
             );
           })()}
         </AnimatePresence>
+              </>
+            )}
 
         {/* ---------------------------------------------------- */}
         {/* CROSS-PROMOTION NETWORK GRID                         */}
@@ -2115,7 +2258,7 @@ export default function App() {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5" id="network-tools-grid">
-            {NETWORK_TOOLS.map((tool, index) => {
+            {currentNetworkTools.map((tool, index) => {
               if (tool.comingSoon) {
                 return (
                   <div
@@ -2183,12 +2326,12 @@ export default function App() {
               Frequently Asked Questions
             </h2>
             <p className="text-[11px] md:text-xs text-gray-400 dark:text-gray-500 mt-1 font-semibold">
-              Find answers to common questions about using EZ Toolbox YouTube analyzer.
+              {subdomainView === "qr" ? "Find answers to common questions about our custom QR Code generator and scanner." : "Find answers to common questions about using EZ Toolbox YouTube analyzer."}
             </p>
           </div>
 
           <div className="max-w-2xl mx-auto space-y-2.5" id="faq-accordions">
-            {FAQ_ITEMS.map((item, index) => {
+            {currentFaqItems.map((item, index) => {
               const isOpen = !!openFaqs[index];
               return (
                 <div 
@@ -2228,7 +2371,7 @@ export default function App() {
           </>
         ) : (
           <>
-            <Pages currentPage={currentPage} setCurrentPage={setCurrentPage} />
+            <Pages currentPage={currentPage} setCurrentPage={setCurrentPage} subdomainView={subdomainView} />
             {/* Native Recommendation Feed Placement for other pages and articles */}
             <AdsterraNative id="pages-bottom-native" enabled={adsEnabled} />
           </>
