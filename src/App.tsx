@@ -808,35 +808,66 @@ export default function App() {
     return saved === null ? false : saved === "true"; // Default to false on first-load
   });
   const [adsterraBannerKey, setAdsterraBannerKey] = useState(() => {
-    return localStorage.getItem("yt_adsterra_banner_key") || "7e08b74965e5580393a5461cede22083";
+    return localStorage.getItem("yt_adsterra_banner_key") || "4c9a72ecc1945050df1c685db5ad1f46";
   });
   const [adsterraSocialBarUrl, setAdsterraSocialBarUrl] = useState(() => {
     return localStorage.getItem("yt_adsterra_social_bar_url") || "https://pl30252585.effectivecpmnetwork.com/94/47/9b/94479bdb2acf4104d1a18b7942b19b96.js";
   });
+
+  // Sync the adsterra keys and social bar urls when the subdomainView changes
+  useEffect(() => {
+    const bannerKeys: Record<"yt" | "qr" | "compress" | "ip" | "converter", string> = {
+      yt: "4c9a72ecc1945050df1c685db5ad1f46",
+      qr: "3021690b027b63131950c55585b3e871",
+      compress: "fec6a1716171a197192b70e3bf7351e1",
+      ip: "28fa5b133d1e8c669ee3eeb7efa5667f",
+      converter: "33995635c87250fab03e2e29d59bb2f3"
+    };
+
+    const socialUrls: Record<"yt" | "qr" | "compress" | "ip" | "converter", string> = {
+      yt: "https://pl30252585.effectivecpmnetwork.com/94/47/9b/94479bdb2acf4104d1a18b7942b19b96.js",
+      qr: "https://pl30254129.effectivecpmnetwork.com/6c/0b/72/6c0b7269d73d4e59bbca9b6547f1046d.js",
+      compress: "https://pl30435866.effectivecpmnetwork.com/8a/11/2f/8a112f3aa228748d641d161bf78f216c.js",
+      ip: "https://pl30435876.effectivecpmnetwork.com/c5/d4/25/c5d42549abdfc4c8b71bd0a7b5780260.js",
+      converter: "https://pl30435884.effectivecpmnetwork.com/c3/5a/e6/c35ae6798df727b9077069e2f8698b59.js"
+    };
+
+    const currentBannerKey = bannerKeys[subdomainView] || bannerKeys.yt;
+    const currentSocialUrl = socialUrls[subdomainView] || socialUrls.yt;
+
+    setAdsterraBannerKey(currentBannerKey);
+    setAdsterraSocialBarUrl(currentSocialUrl);
+  }, [subdomainView]);
 
   // Dynamically inject/remove Adsterra Social Bar script (Desktop only to prevent blocking mobile header/clicks)
   useEffect(() => {
     const handleSocialBar = () => {
       const isLargeScreen = window.innerWidth >= 1024; // Only load on screen widths of 1024px or above (Desktop)
 
+      const existing = document.getElementById("adsterra-social-bar");
       if (!adsEnabled || !adsterraSocialBarUrl || !isLargeScreen || isDevelopment) {
-        const existing = document.getElementById("adsterra-social-bar");
         if (existing) {
           document.body.removeChild(existing);
         }
         return;
       }
 
-      // Inject if it doesn't exist
-      const oldScript = document.getElementById("adsterra-social-bar");
-      if (!oldScript) {
-        const script = document.createElement("script");
-        script.src = adsterraSocialBarUrl;
-        script.type = "text/javascript";
-        script.async = true;
-        script.id = "adsterra-social-bar";
-        document.body.appendChild(script);
+      // If existing script has a different src, remove it first to load the new one
+      if (existing) {
+        if (existing.getAttribute("src") !== adsterraSocialBarUrl) {
+          document.body.removeChild(existing);
+        } else {
+          return;
+        }
       }
+
+      // Inject if it doesn't exist or was just removed due to src change
+      const script = document.createElement("script");
+      script.src = adsterraSocialBarUrl;
+      script.type = "text/javascript";
+      script.async = true;
+      script.id = "adsterra-social-bar";
+      document.body.appendChild(script);
     };
 
     handleSocialBar();
@@ -849,7 +880,7 @@ export default function App() {
         document.body.removeChild(existing);
       }
     };
-  }, [adsEnabled, adsterraSocialBarUrl]);
+  }, [adsEnabled, adsterraSocialBarUrl, isDevelopment]);
 
   // FAQ active indexes
   const [openFaqs, setOpenFaqs] = useState<Record<number, boolean>>({});
@@ -1170,11 +1201,11 @@ export default function App() {
 
       {/* Floating Skyscraper Sidebars - Fixed & Hidden on viewports below 2xl */}
       <div className="hidden 2xl:block fixed left-4 top-[180px] z-30" id="adsterra-skyscraper-left">
-        <Adsterra160x600 id="floating-sidebar-left" enabled={adsEnabled} />
+        <Adsterra160x600 id="floating-sidebar-left" enabled={adsEnabled} subdomainView={subdomainView} />
       </div>
 
       <div className="hidden 2xl:block fixed right-4 top-[180px] z-30" id="adsterra-skyscraper-right">
-        <Adsterra160x600 id="floating-sidebar-right" enabled={adsEnabled} />
+        <Adsterra160x600 id="floating-sidebar-right" enabled={adsEnabled} subdomainView={subdomainView} />
       </div>
       
       {/* ---------------------------------------------------- */}
@@ -1633,7 +1664,7 @@ export default function App() {
 
         {/* Responsive Mobile Banner placement - displayed below search card on mobile viewports */}
         <div className="block 2xl:hidden my-6 text-center" id="global-upper-mobile-banner">
-          <Adsterra320x50 id="global-upper" enabled={adsEnabled} />
+          <Adsterra320x50 id="global-upper" enabled={adsEnabled} subdomainView={subdomainView} />
         </div>
 
         {/* ---------------------------------------------------- */}
@@ -2480,7 +2511,7 @@ export default function App() {
         </section>
 
         {/* Native Recommendation Feed Placement - Styled perfectly for both desktop and mobile */}
-        <AdsterraNative id="bottom-native" enabled={adsEnabled} />
+        <AdsterraNative id="bottom-native" enabled={adsEnabled} subdomainView={subdomainView} />
 
         {/* ---------------------------------------------------- */}
         {/* FAQ ACCORDION                                        */}
@@ -2546,7 +2577,7 @@ export default function App() {
           <>
             <Pages currentPage={currentPage} setCurrentPage={setCurrentPage} subdomainView={subdomainView} />
             {/* Native Recommendation Feed Placement for other pages and articles */}
-            <AdsterraNative id="pages-bottom-native" enabled={adsEnabled} />
+            <AdsterraNative id="pages-bottom-native" enabled={adsEnabled} subdomainView={subdomainView} />
           </>
         )}
       </main>

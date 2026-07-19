@@ -1833,7 +1833,7 @@ END:VCALENDAR`;
 
       {/* Adsterra Native Recommendation Feed */}
       <div className="mt-12" id="qr-bottom-native-ad">
-        <AdsterraNative id="qr-bottom-native" enabled={adsEnabled} />
+        <AdsterraNative id="qr-bottom-native" enabled={adsEnabled} subdomainView="qr" />
       </div>
 
     </div>
