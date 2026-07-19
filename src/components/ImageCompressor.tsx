@@ -15,7 +15,6 @@ import {
   ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { AdsterraNative } from "./AdsterraNative";
 
 interface CompressedFile {
   id: string;
@@ -505,16 +504,6 @@ export const ImageCompressor: React.FC<ImageCompressorProps> = ({ adsEnabled }) 
               </div>
             </div>
           </div>
-
-          {/* Ad banner right below dropzone */}
-          {adsEnabled && (
-            <div className="flex justify-center" id="dropzone-ads-placement">
-              <div className="w-full max-w-lg">
-                <AdsterraNative id="compress-middle-native" enabled={adsEnabled} />
-              </div>
-            </div>
-          )}
-
           {/* File Queue List */}
           <AnimatePresence>
             {files.length > 0 ? (

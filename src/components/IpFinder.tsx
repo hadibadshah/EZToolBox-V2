@@ -17,7 +17,6 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { AdsterraNative } from "./AdsterraNative";
 
 interface IpDetails {
   ip: string;
@@ -526,16 +525,6 @@ export const IpFinder: React.FC<IpFinderProps> = ({ adsEnabled }) => {
 
         </div>
       </div>
-
-      {/* Middle Banner Ad Placement */}
-      {adsEnabled && (
-        <div className="flex justify-center" id="ip-mid-ad-placement">
-          <div className="w-full max-w-lg">
-            <AdsterraNative id="ip-middle-native" enabled={adsEnabled} />
-          </div>
-        </div>
-      )}
-
       {/* Secondary grid: Registry metadata & Diagnostic tools arranged cleanly below */}
       <div className="grid lg:grid-cols-12 gap-8 items-start pt-6" id="ip-metadata-section">
         {/* Left Grid: Comprehensive Info Registry */}

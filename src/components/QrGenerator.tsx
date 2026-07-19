@@ -40,7 +40,6 @@ import { motion, AnimatePresence } from "motion/react";
 import QRCode from "qrcode";
 import jsQR from "jsqr";
 import { Adsterra320x50 } from "./Adsterra320x50";
-import { AdsterraNative } from "./AdsterraNative";
 
 type QRType = 
   | "url" 
@@ -1830,11 +1829,6 @@ END:VCALENDAR`;
 
         </div>
       )}
-
-      {/* Adsterra Native Recommendation Feed */}
-      <div className="mt-12" id="qr-bottom-native-ad">
-        <AdsterraNative id="qr-bottom-native" enabled={adsEnabled} subdomainView="qr" />
-      </div>
 
     </div>
   );
