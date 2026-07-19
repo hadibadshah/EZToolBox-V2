@@ -6,7 +6,7 @@ import { AdsterraNative } from "./components/AdsterraNative";
 import { QrGenerator } from "./components/QrGenerator";
 import { ImageCompressor } from "./components/ImageCompressor";
 import { IpFinder } from "./components/IpFinder";
-import { SpeedTester } from "./components/SpeedTester";
+import { UniversalConverter } from "./components/UniversalConverter";
 import { 
   Youtube, 
   Search, 
@@ -41,7 +41,7 @@ import {
   RefreshCw,
   Eye,
   Phone,
-  Gauge
+  Calculator
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { VideoData, ChannelData, FreeTool, FAQItem } from "./types";
@@ -281,10 +281,10 @@ const NETWORK_TOOLS: FreeTool[] = [
     colorClass: "bg-indigo-500"
   },
   {
-    name: "EZ Internet Speed Tester",
-    description: "Benchmark your download rate, upload speed, latency, and jitter with a beautiful dial speedometer gauge.",
-    icon: "Gauge",
-    url: "https://speed.eztoolbox.xyz",
+    name: "EZ Universal Converter & Calculator",
+    description: "Convert currency with live Google rates, calculate standard operations, and convert weight, length, & distance units instantly.",
+    icon: "Calculator",
+    url: "https://converter.eztoolbox.xyz",
     colorClass: "bg-blue-600"
   }
 ];
@@ -381,22 +381,22 @@ const IP_FAQ_ITEMS: FAQItem[] = [
   }
 ];
 
-const SPEED_FAQ_ITEMS: FAQItem[] = [
+const CONVERTER_FAQ_ITEMS: FAQItem[] = [
   {
-    question: "How does the EZ Internet Speed Tester calculate my download and upload rates?",
-    answer: "Our speed tester triggers real, multi-thread parallel downloads from high-capacity global CDN edge servers (using non-cacheable endpoints) to accurately sample your inbound bandwidth. For upload rates, it calculates upstream transfer capabilities by safely measuring standard file upload latency in the browser."
+    question: "Where are the currency exchange rates sourced from?",
+    answer: "Our Currency Converter fetches real-time, live accurate exchange rates directly from global markets, identical to what is displayed on search engines like Google. Rates update continuously to ensure precise financial conversions."
   },
   {
-    question: "What is Jitter and why is it important?",
-    answer: "Jitter is the variance or consistency in packet arrival times (measured in milliseconds). While ping is the speed of round-trip packets, low jitter (ideally under 5ms) ensures a stable connection—crucial for voice calls, video meetings, and online multiplayer gaming to prevent sudden lagging."
+    question: "Does the converter support offline usage?",
+    answer: "Yes! The Calculator and Unit Converter functions (weight, length, distance) are 100% client-side and work completely offline. For currency conversions, the tool caches the last fetched exchange rates so you can continue using it even without an active internet connection."
   },
   {
-    question: "Are my network coordinates or test logs stored?",
-    answer: "Absolutely not! EZ Toolbox stands for complete client-side privacy. All latency tracking, IP lookups, and speed tests are executed directly inside your local browser memory. We never log, save, or monetize your connection history or IP footprints on any database."
+    question: "What unit conversions are available in this tool?",
+    answer: "You can convert between a wide variety of standard scientific and everyday units: Weight/Mass (grams, kilograms, pounds, ounces), Length/Distance (inches, centimeters, meters, kilometers, miles, feet, yards), and Temperature or Volume. All calculations happen instantly as you type."
   },
   {
-    question: "Why do different speed tests show different bandwidth results?",
-    answer: "Bandwidth results can fluctuate based on server proximity, routing paths, browser extensions, concurrent device downloads on your household Wi-Fi, and active CDN load. EZ Speed Tester tests directly against top cloud edge providers to deliver raw, unfiltered diagnostic results."
+    question: "How do I view my calculation history in the calculator?",
+    answer: "Our modern interactive calculator displays a scrollable history tape above the primary numbers. You can see your previous operations, click to reuse past results, or clear the history tape at any time."
   }
 ];
 
@@ -628,7 +628,7 @@ async function clientFetchChannel(url: string, keyToUse: string): Promise<Channe
 
 export default function App() {
   // Automatic Subdomain & Domain detection
-  const [subdomainView, setSubdomainView] = useState<"yt" | "qr" | "compress" | "ip" | "speed">(() => {
+  const [subdomainView, setSubdomainView] = useState<"yt" | "qr" | "compress" | "ip" | "converter">(() => {
     const hostname = window.location.hostname.toLowerCase();
     if (hostname.includes("qr.eztoolbox.xyz") || hostname.includes("qr.")) {
       return "qr";
@@ -639,8 +639,8 @@ export default function App() {
     if (hostname.includes("ip.eztoolbox.xyz") || hostname.includes("ip.")) {
       return "ip";
     }
-    if (hostname.includes("speed.eztoolbox.xyz") || hostname.includes("speed.")) {
-      return "speed";
+    if (hostname.includes("speed.eztoolbox.xyz") || hostname.includes("speed.") || hostname.includes("converter.")) {
+      return "converter";
     }
     return "yt";
   });
@@ -668,7 +668,7 @@ export default function App() {
       return [ytTool, speedTool, qrTool, ipTool, pdfTool, colorTool];
     } else if (subdomainView === "ip") {
       return [ytTool, speedTool, qrTool, compressTool, pdfTool, colorTool];
-    } else { // speed
+    } else { // converter
       return [ytTool, qrTool, compressTool, ipTool, pdfTool, colorTool];
     }
   })();
@@ -679,8 +679,8 @@ export default function App() {
       ? COMPRESS_FAQ_ITEMS
       : subdomainView === "ip"
         ? IP_FAQ_ITEMS
-        : subdomainView === "speed"
-          ? SPEED_FAQ_ITEMS
+        : subdomainView === "converter"
+          ? CONVERTER_FAQ_ITEMS
           : FAQ_ITEMS;
 
   // Check if running in development sandbox environment (e.g. AI Studio preview)
@@ -753,8 +753,8 @@ export default function App() {
         suffix = "EZ Toolbox — Free Bulk Image Compressor (PNG, JPG, WebP, SVG)";
       } else if (subdomainView === "ip") {
         suffix = "EZ Toolbox — What Is My IP & Geolocation Location Finder";
-      } else if (subdomainView === "speed") {
-        suffix = "EZ Toolbox — Free High-Fidelity Internet Speed Tester (VIP)";
+      } else if (subdomainView === "converter") {
+        suffix = "EZ Toolbox — Free Live Google Rate Universal Converter & Calculator (VIP)";
       } else {
         suffix = "EZ Toolbox — YouTube Analyzer & Downloader (High-Res Thumbnails)";
       }
@@ -1069,7 +1069,7 @@ export default function App() {
       case "Palette": return <Palette className={className} id="icon-color" />;
       case "RefreshCw": return <RefreshCw className={className} id="icon-convert" />;
       case "Globe": return <Globe className={className} id="icon-globe" />;
-      case "Gauge": return <Gauge className={className} id="icon-speed" />;
+      case "Calculator": return <Calculator className={className} id="icon-converter" />;
       case "Youtube": return <Youtube className={className} id="icon-youtube" />;
       default: return <Grid className={className} id="icon-default" />;
     }
@@ -1140,14 +1140,14 @@ export default function App() {
                 ip (IP Geolocation)
               </button>
               <button
-                onClick={() => setSubdomainView("speed")}
+                onClick={() => setSubdomainView("converter")}
                 className={`px-2.5 py-1 rounded-md text-[11px] transition-all cursor-pointer shrink-0 ${
-                  subdomainView === "speed"
+                  subdomainView === "converter"
                     ? "bg-white text-emerald-800 shadow-sm"
                     : "text-emerald-100 hover:text-white"
                 }`}
               >
-                speed (Speed Test)
+                converter (Universal Converter)
               </button>
             </div>
           </div>
@@ -1194,8 +1194,8 @@ export default function App() {
                 <Sliders className="h-6 w-6" id="brand-compress-icon" />
               ) : subdomainView === "ip" ? (
                 <Globe className="h-6 w-6" id="brand-ip-icon" />
-              ) : subdomainView === "speed" ? (
-                <Gauge className="h-6 w-6" id="brand-speed-icon" />
+              ) : subdomainView === "converter" ? (
+                <Calculator className="h-6 w-6" id="brand-converter-icon" />
               ) : (
                 <Youtube className="h-6 w-6" id="brand-youtube-icon" />
               )}
@@ -1206,11 +1206,11 @@ export default function App() {
                   EZ Toolbox
                 </span>
                 <span className="text-sm px-1.5 py-0.5 bg-gray-100 dark:bg-neutral-800 text-gray-600 dark:text-gray-400 font-mono rounded font-medium" id="brand-utility-logo">
-                  {subdomainView === "qr" ? "🎯" : subdomainView === "compress" ? "⚡" : subdomainView === "ip" ? "🌐" : subdomainView === "speed" ? "🚀" : "🛠️"}
+                  {subdomainView === "qr" ? "🎯" : subdomainView === "compress" ? "⚡" : subdomainView === "ip" ? "🌐" : subdomainView === "converter" ? "🧮" : "🛠️"}
                 </span>
               </div>
               <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wide uppercase" id="brand-subtext">
-                {subdomainView === "qr" ? "QR Generator & Scanner" : subdomainView === "compress" ? "Bulk Image Compressor" : subdomainView === "ip" ? "What is My IP & Location" : subdomainView === "speed" ? "Internet Speed Tester" : "YT Analytics Engine"}
+                {subdomainView === "qr" ? "QR Generator & Scanner" : subdomainView === "compress" ? "Bulk Image Compressor" : subdomainView === "ip" ? "What is My IP & Location" : subdomainView === "converter" ? "Universal Converter & Calc" : "YT Analytics Engine"}
               </p>
             </div>
           </div>
@@ -1477,8 +1477,8 @@ export default function App() {
               <ImageCompressor adsEnabled={adsEnabled} />
             ) : subdomainView === "ip" ? (
               <IpFinder adsEnabled={adsEnabled} />
-            ) : subdomainView === "speed" ? (
-              <SpeedTester adsEnabled={adsEnabled} />
+            ) : subdomainView === "converter" ? (
+              <UniversalConverter adsEnabled={adsEnabled} />
             ) : (
               <>
         

@@ -4,7 +4,7 @@ import { ArrowLeft, Mail, Phone, ExternalLink, Shield, FileText, Info, BookOpen,
 interface PagesProps {
   currentPage: "about" | "contact" | "privacy" | "terms" | "articles";
   setCurrentPage: (page: "home" | "about" | "contact" | "privacy" | "terms" | "articles") => void;
-  subdomainView?: "yt" | "qr" | "compress" | "ip";
+  subdomainView?: "yt" | "qr" | "compress" | "ip" | "converter";
 }
 
 export const Pages: React.FC<PagesProps> = ({ currentPage, setCurrentPage, subdomainView = "yt" }) => {
@@ -25,6 +25,10 @@ export const Pages: React.FC<PagesProps> = ({ currentPage, setCurrentPage, subdo
     if (path.includes("/articles/what-is-my-ip-address-ipv4-vs-ipv6")) return 10;
     if (path.includes("/articles/ip-geolocation-accuracy-gps-wifi-mapping")) return 11;
     if (path.includes("/articles/understanding-internet-isps-asns-routing")) return 12;
+    // Converter Articles
+    if (path.includes("/articles/currency-exchange-rates-calculation-live-rates")) return 13;
+    if (path.includes("/articles/importance-of-accurate-scientific-unit-converters")) return 14;
+    if (path.includes("/articles/how-to-use-interactive-financial-calculators")) return 15;
     return null;
   };
 
@@ -531,13 +535,124 @@ If you experience high load times, it is usually because BGP is routing your tra
     }
   ];
 
+  const converterArticles = [
+    {
+      id: 13,
+      title: "How Live Currency Exchange Rates Work & Sourcing Real-Time Global Feeds",
+      summary: "Understand the financial mechanisms behind real-time exchange rates, mid-market interbank pricing, and how digital converters synchronize global currency feeds instantly.",
+      slug: "currency-exchange-rates-calculation-live-rates",
+      keywords: "live currency converter, real-time exchange rates, global interbank rate, usd to pkr, usd to inr, forex rates api, currency calculation offline",
+      date: "July 19, 2026",
+      readTime: "6 min read",
+      content: `### Sourcing the Pulse of Global Foreign Exchange Markets
+
+Have you ever wondered why currency rates fluctuate second-by-second on Google? The foreign exchange (Forex) market is the largest, most liquid financial market in the world, trading over $7.5 trillion daily. Unlike stock markets, Forex has no centralized exchange; it operates through a global network of banks, brokers, and financial institutions known as the **interbank market**.
+
+In this guide, we will pull back the curtain on how live exchange rates are formulated, how mid-market rates are calculated, and how our **EZ Universal Converter** synchronizes directly with international interbank feeds.
+
+---
+
+### What is the Mid-Market Rate and Why Does it Matter?
+
+When you search for a currency pair (like USD to PKR or USD to INR), search engines display the **mid-market rate** (also known as the real exchange rate).
+
+* **The Bid Rate**: The maximum price a buyer is willing to pay for a currency.
+* **The Ask Rate**: The minimum price a seller is willing to accept for that currency.
+* **The Mid-Market Rate**: The exact midpoint between the Bid and Ask rates on global interbank markets.
+
+Most retail banks, airport exchange booths, and credit card companies add a hidden markup (often 2% to 5%) to this rate to make a profit. Our **Live Google Rate Sync Utility** bypasses retail markups, retrieving the raw, unfiltered mid-market rates so you can calculate with true institutional precision.
+
+---
+
+### How Offline Rate Caching Protects Your Productivity
+
+To guarantee uninterrupted performance, our currency converter implements intelligent client-side caching:
+
+1. **Instant Sync**: On page load, the converter fires a secure asynchronous request to our optimized interbank rate proxy.
+2. **Local Caching**: The fetched rates are saved in your local session.
+3. **Graceful Fallback**: If you go offline, enter a basement with poor Wi-Fi, or travel on an airplane, the tool automatically falls back to our high-precision preloaded cached rates. You can continue calculating and converting currency pairs without any interruptions!`
+    },
+    {
+      id: 14,
+      title: "The Importance of Accurate Scientific Unit Conversions in Engineering & Trade",
+      summary: "Discover why precision in converting imperial measurements (inches, pounds) to metric standards (centimeters, kilograms) is critical for international trade and scientific projects.",
+      slug: "importance-of-accurate-scientific-unit-converters",
+      keywords: "scientific unit converter, imperial to metric conversion, grams to kilograms, inches to centimeters, precision engineering, weight converter, length distance translator",
+      date: "July 15, 2026",
+      readTime: "5 min read",
+      content: `### The Cost of a Mathematical Typo: Imperial vs. Metric Systems
+
+In 1999, NASA’s Mars Climate Orbiter disintegrated in the Martian atmosphere. The root cause? One engineering team used imperial units (pound-force seconds), while another team used metric units (Newton seconds) to calculate thruster impulses. This single unit mismatch cost $327 million and years of research.
+
+Whether you are a developer calculating CSS pixel boundaries, an international merchant shipping freight in pounds (lbs) and kilograms (kg), or an engineer designing hardware, **precision unit converters are an absolute necessity**.
+
+---
+
+### Understanding the Imperial and Metric Standards
+
+* **The Metric System (SI - International System of Units)**: Used by 95% of the world. Built on decimal bases (multiples of 10), making scientific scaling logical and straightforward (e.g., millimeters, centimeters, meters, kilometers).
+* **The Imperial System (US Customary)**: Predominantly used in the United States and Liberia. It relies on arbitrary historical subdivisions (e.g., 12 inches in a foot, 3 feet in a yard, 16 ounces in a pound).
+
+Our **EZ Scientific Converter** bridges this gap, giving you instant, rounded bento-grid outputs across both standards as you type:
+
+| Measurement Type | Source Unit | Target Unit | Scientific Formula |
+|---|---|---|---|
+| **Weight / Mass** | Pounds (lb) | Kilograms (kg) | 1 lb = 0.45359237 kg |
+| **Weight / Mass** | Ounces (oz) | Grams (g) | 1 oz = 28.3495231 g |
+| **Length / Distance**| Inches (in) | Centimeters (cm) | 1 in = 2.54 cm |
+| **Length / Distance**| Feet (ft) | Meters (m) | 1 ft = 0.3048 m |
+
+---
+
+### Interactive Bento Grids for Immediate Analysis
+
+Unlike old-school drop-down converters where you can only view one conversion pair at a time, our modern **Bento Grid Layout** displays immediate converted values across **all scientific and imperial categories simultaneously**. One look gives you milligrams, inches, yards, kilograms, and ounces all at once!`
+    },
+    {
+      id: 15,
+      title: "How to Leverage Interactive Financial Calculators to Streamline Business Operations",
+      summary: "Learn how to use nested parentheses, percentage shortcuts, and history tapes in modern calculators to speed up retail pricing and bookkeeping workflows.",
+      slug: "how-to-use-interactive-financial-calculators",
+      keywords: "interactive calculator online, business financial calculator, percentage calculation shortcuts, calculator history tape, browser calculations, clear history tape",
+      date: "July 10, 2026",
+      readTime: "5 min read",
+      content: `### Accelerating Everyday Math with Modern Web Interfaces
+
+Even in the era of advanced spreadsheets, a physical or simple interactive calculator remains the fastest way to perform rapid operations, check invoice totals, or calculate retail discounts.
+
+However, standard smartphone calculators often lack advanced client-side tracking, leaving you with no way to double-check your previous inputs if you get distracted. Our **EZ Interactive Calculator** is engineered with a **History Tape Receipt Engine** to completely optimize your daily financial workflows.
+
+---
+
+### Mastering Calculator Operators & Shortcuts
+
+Our calculator supports complete physical keyboard mapping alongside its touch-optimized layout:
+
+* **Nested Parentheses \`(\` and \`)\`**: Essential for maintaining mathematical order of operations (PEMDAS). For example, entering \`200 * (1 - 15%)\` quickly computes a 15% discount on a $200 invoice.
+* **Instant Percentage Shortcuts \`%\`**: Typing a number followed by \`%\` automatically scales it to its hundredth decimal representation, removing the need to type extra division operations.
+* **Live Keyboard Status**: Simply click anywhere on the calculator screen and start typing on your physical keypad. Standard numbers, decimals, backspaces, and the Enter key map natively to their operational counterpart!
+
+---
+
+### The History Tape: Your Audit Trail
+
+Every time you press the \`=\` key or hit Enter, the equation and its formatted outcome are securely logged onto your **Scrollable History Tape**.
+
+* **Prevent Repetitive Calculation**: If you need to re-verify a previous invoice sum, simply scroll up on the tape.
+* **Instant Recall**: Click on any past calculation in the history tape to automatically load it back into your main active input line.
+* **Complete Data Control**: Clear your history tape at any time with a single click to maintain pristine client-side security.`
+    }
+  ];
+
   const articles = subdomainView === "qr" 
     ? qrArticles 
     : subdomainView === "compress" 
       ? compressArticles 
       : subdomainView === "ip"
         ? ipArticles
-        : youtubeArticles;
+        : subdomainView === "converter"
+          ? converterArticles
+          : youtubeArticles;
 
   return (
     <div className="space-y-8" id="seo-pages-container">
@@ -548,7 +663,13 @@ If you experience high load times, it is usually because BGP is routing your tra
           className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-lg border border-emerald-100 dark:border-emerald-900/20 transition-all cursor-pointer"
           id="back-to-home-btn"
         >
-          <ArrowLeft className="h-4 w-4" /> Return to Analyzer Dashboard
+          <ArrowLeft className="h-4 w-4" /> Return to {
+            subdomainView === "qr" ? "QR Generator Dashboard" :
+            subdomainView === "compress" ? "Compressor Dashboard" :
+            subdomainView === "ip" ? "IP Finder Dashboard" :
+            subdomainView === "converter" ? "Converter Dashboard" :
+            "Analyzer Dashboard"
+          }
         </button>
         <span className="text-[10px] uppercase tracking-widest font-extrabold text-gray-400 dark:text-neutral-500">
           EZ Toolbox • {currentPage} page
@@ -564,14 +685,36 @@ If you experience high load times, it is usually because BGP is routing your tra
             <div className="space-y-2">
               <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest block">Our Mission</span>
               <h2 className="font-display font-extrabold text-2xl md:text-3xl text-gray-950 dark:text-white tracking-tight">
-                About EZ Toolbox: The Ultimate YouTube SEO & Analytics Engine
+                {subdomainView === "qr" ? "About EZ Toolbox: The Professional QR Code & Custom Branding Utility" :
+                 subdomainView === "compress" ? "About EZ Toolbox: The Privacy-First Bulk Image Compression Engine" :
+                 subdomainView === "ip" ? "About EZ Toolbox: The Instant IP Geolocation & Routing Intelligence Center" :
+                 subdomainView === "converter" ? "About EZ Toolbox: The Real-Time Universal Currency & Units Converter" :
+                 "About EZ Toolbox: The Ultimate YouTube SEO & Analytics Engine"}
               </h2>
             </div>
             <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
-              Welcome to <strong>EZ Toolbox</strong>, the industry-leading digital toolkit engineered to simplify and optimize your digital creator journey. We design professional-grade, lightweight web utilities focused on search engine optimization, video metadata extraction, channel analytics auditing, and high-performance branding assets.
+              Welcome to <strong>EZ Toolbox</strong>, the industry-leading digital toolkit engineered to simplify and optimize your day-to-day workflow. We design professional-grade, lightweight web utilities focused on {
+                subdomainView === "qr" ? "creating visually beautiful, custom-styled secure QR codes with logo embedding" :
+                subdomainView === "compress" ? "performing rapid, offline-first bulk image compression to enhance Core Web Vitals" :
+                subdomainView === "ip" ? "providing detailed IPv4/IPv6 address properties, IP geolocation mapping, and ISP network statistics" :
+                subdomainView === "converter" ? "providing real-time interbank currency exchange conversions, precision length/weight translators, and mathematical history calculators" :
+                "search engine optimization, video metadata extraction, channel analytics auditing, and high-performance branding assets"
+              }.
             </p>
             <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
-              Our flagship <strong>YouTube Analyzer and SEO Extractor</strong> addresses the core bottlenecks that creators face daily: locating high-performing competitor tags, analyzing metadata quality, downloading pristine thumbnails, auditing monetization status, and tracking historical channel subscriber growth.
+              Our flagship <strong>{
+                subdomainView === "qr" ? "QR Code Creator" :
+                subdomainView === "compress" ? "Bulk Image Optimizer" :
+                subdomainView === "ip" ? "IP Geolocation Finder" :
+                subdomainView === "converter" ? "Universal Converter & Calculator" :
+                "YouTube Analyzer and SEO Extractor"
+              }</strong> addresses the core bottlenecks that our users face daily: {
+                subdomainView === "qr" ? "crafting trustable branded codes, embedding vector logos, choosing error correction levels, and downloading scalable SVGs." :
+                subdomainView === "compress" ? "reducing bloated camera photographs and banners, resizing width proportions, and transcoding files into next-generation WebP." :
+                subdomainView === "ip" ? "inspecting routing networks, tracing latitude/longitude centers, identifying network registry ASNs, and testing ping latencies." :
+                subdomainView === "converter" ? "retrieving genuine Google mid-market rates, converting pounds to kilograms, measuring inches to centimeters, and tracking calculations." :
+                "locating high-performing competitor tags, analyzing metadata quality, downloading pristine thumbnails, auditing monetization status, and tracking historical channel subscriber growth."
+              }
             </p>
 
             <div className="grid md:grid-cols-2 gap-4 pt-4">
@@ -580,16 +723,16 @@ If you experience high load times, it is usually because BGP is routing your tra
                   <Shield className="h-4 w-4 text-emerald-500" /> Privacy & Local-First Security
                 </h4>
                 <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
-                  We believe in keeping your credentials safe. All personal YouTube API Keys remain cached purely in your local browser storage. We never log your search queries, channel investigations, or private metadata on remote external databases.
+                  We believe in keeping your details safe. All calculated inputs, loaded images, and active conversions remain cached purely in your local browser storage. We never log your actions, inputs, or private metadata on remote external databases.
                 </p>
               </div>
 
               <div className="p-4 bg-slate-50 dark:bg-neutral-950 rounded-xl border border-slate-100 dark:border-neutral-800 space-y-2">
                 <h4 className="font-bold text-xs md:text-sm text-gray-900 dark:text-white flex items-center gap-1.5">
-                  <BookOpen className="h-4 w-4 text-emerald-500" /> SEO-Driven Keyword Extraction
+                  <BookOpen className="h-4 w-4 text-emerald-500" /> SEO-Driven Utility Design
                 </h4>
                 <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
-                  By extracting hidden tags and evaluating title densities, our tools let you build search-friendly video descriptions and copy-paste high-relevance terms in seconds. Rank higher in search results with verified competitor data.
+                  Each tool is engineered to satisfy strict visual guidelines, SEO metadata checklists, and ultra-fast client-side processing speeds. Increase search engine ranks and load speeds with our highly optimized modules.
                 </p>
               </div>
             </div>
@@ -597,7 +740,7 @@ If you experience high load times, it is usually because BGP is routing your tra
             <div className="pt-6 border-t border-slate-100 dark:border-neutral-800 space-y-4">
               <h3 className="font-display font-extrabold text-sm text-gray-950 dark:text-white tracking-tight">Our Core Development Philosophy</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                EZ Toolbox was built to challenge bulky, slow, and expensive analytics platforms. By streamlining requests through sandboxed secure APIs, we deliver immediate Social Blade style channel projections, fast AdSense CPM calculations, and robust metadata diagnostic stats in a lightning-fast interface that works flawlessly across all mobile, tablet, and desktop viewports.
+                EZ Toolbox was built to challenge bulky, slow, and expensive subscription-based tools. By streamlining requests through sandboxed client-side logic and highly optimized APIs, we deliver immediate, high-fidelity results in a lightning-fast interface that works flawlessly across all mobile, tablet, and desktop viewports.
               </p>
             </div>
           </div>
@@ -703,28 +846,43 @@ If you experience high load times, it is usually because BGP is routing your tra
                         );
                       }
                       if (para.startsWith("| ")) {
-                        // Render simple table
+                        // Render simple table dynamically
+                        const rows = para.split("\n").filter(row => row.trim().startsWith("|"));
+                        const headerRow = rows[0];
+                        const dataRows = rows.slice(2); // Skip header and separator rows
+
+                        const headers = headerRow.split("|").map(c => c.trim()).filter(Boolean);
+
                         return (
                           <div key={i} className="overflow-x-auto my-4 rounded-xl border border-slate-200 dark:border-neutral-800">
                             <table className="w-full text-left border-collapse text-[10px] md:text-xs">
                               <thead>
                                 <tr className="bg-slate-50 dark:bg-neutral-950 font-bold border-b border-slate-200 dark:border-neutral-800">
-                                  <th className="p-3">Country Tier</th>
-                                  <th className="p-3">CPM Range</th>
-                                  <th className="p-3">High-Paying CPM</th>
-                                  <th className="p-3">Examples</th>
+                                  {headers.map((header, hIdx) => (
+                                    <th key={hIdx} className="p-3">{header.replace(/\*\*/g, "")}</th>
+                                  ))}
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-slate-100 dark:divide-neutral-800/40">
-                                {para.split("\n").slice(2).map((row, rIdx) => {
+                                {dataRows.map((row, rIdx) => {
                                   const cols = row.split("|").map(c => c.trim()).filter(Boolean);
-                                  if (cols.length < 4) return null;
+                                  if (cols.length === 0) return null;
                                   return (
                                     <tr key={rIdx} className="hover:bg-slate-50/40 dark:hover:bg-neutral-900/30">
-                                      <td className="p-3 font-semibold text-gray-900 dark:text-white">{cols[0]}</td>
-                                      <td className="p-3 font-mono font-bold text-emerald-600 dark:text-emerald-400">{cols[1]}</td>
-                                      <td className="p-3 font-mono">{cols[2]}</td>
-                                      <td className="p-3 text-gray-500 dark:text-gray-400">{cols[3]}</td>
+                                      {cols.map((col, cIdx) => (
+                                        <td 
+                                          key={cIdx} 
+                                          className={`p-3 ${
+                                            cIdx === 0 
+                                              ? "font-semibold text-gray-900 dark:text-white" 
+                                              : cIdx === 1 
+                                                ? "font-mono font-bold text-emerald-600 dark:text-emerald-400" 
+                                                : "text-gray-500 dark:text-gray-400"
+                                          }`}
+                                        >
+                                          {col.replace(/\*\*/g, "")}
+                                        </td>
+                                      ))}
                                     </tr>
                                   );
                                 })}

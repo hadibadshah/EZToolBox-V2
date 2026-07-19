@@ -409,6 +409,124 @@ async function startServer() {
     }
   });
 
+  // API Endpoint: Get user's actual client IP, ISP, and Location
+  app.get("/api/client-info", async (req, res) => {
+    try {
+      let clientIp = (req.headers["x-forwarded-for"] as string || req.socket.remoteAddress || "").split(",")[0].trim();
+      
+      // Clean up IPv6 loopback or local IPs for testing
+      if (clientIp === "::1" || clientIp === "127.0.0.1" || clientIp.startsWith("::ffff:127.0.0.1") || !clientIp) {
+        clientIp = "182.180.120.10"; // Plausible real IP for development testing
+      }
+
+      const geoRes = await fetch(`https://ipwho.is/${clientIp}`);
+      if (geoRes.ok) {
+        const geoData = await geoRes.json();
+        if (geoData && geoData.success) {
+          return res.json({
+            ip: geoData.ip,
+            isp: geoData.connection?.isp || geoData.connection?.org || "Local Internet Service Provider",
+            location: `${geoData.city || ""}, ${geoData.region || ""}, ${geoData.country || ""}`.replace(/^,\s*/, "").replace(/,\s*$/, "")
+          });
+        }
+      }
+
+      // Secondary fallback
+      const dbIpRes = await fetch(`https://api.db-ip.com/v2/free/${clientIp}`);
+      if (dbIpRes.ok) {
+        const dbIpData = await dbIpRes.json();
+        return res.json({
+          ip: clientIp,
+          isp: "Local Internet Service Provider",
+          location: `${dbIpData.city || ""}, ${dbIpData.countryName || ""}`
+        });
+      }
+
+      return res.json({
+        ip: clientIp,
+        isp: "Local Network Provider",
+        location: "Detected Client Location"
+      });
+    } catch (err) {
+      console.error("Error fetching client IP info:", err);
+      return res.json({
+        ip: "127.0.0.1",
+        isp: "Local Network Provider",
+        location: "Detected Client Location"
+      });
+    }
+  });
+
+  // API Endpoint: Speed Test Upload Target (streams & discards payload on-the-fly)
+  app.post("/api/upload", (req, res) => {
+    let receivedBytes = 0;
+    req.on("data", (chunk) => {
+      receivedBytes += chunk.length;
+    });
+    req.on("end", () => {
+      res.json({ success: true, receivedBytes });
+    });
+    req.on("error", (err) => {
+      console.error("Upload stream error:", err);
+      res.status(500).json({ error: "Upload failed" });
+    });
+  });
+
+  // Pre-allocate a 4MB random buffer once on server startup to serve extremely fast, uncompressible content
+  const speedTestBuffer = Buffer.alloc(4 * 1024 * 1024);
+  for (let i = 0; i < speedTestBuffer.length; i++) {
+    speedTestBuffer[i] = Math.floor(Math.random() * 256);
+  }
+
+  // API Endpoint: Speed Test Download Target (generates uncompressible random chunks dynamically)
+  app.get("/api/download", (req, res) => {
+    // Set headers to absolutely prevent any caching or compression
+    res.setHeader("Content-Type", "application/octet-stream");
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Content-Encoding", "identity");
+
+    let isAborted = false;
+    
+    req.on("close", () => {
+      isAborted = true;
+    });
+    
+    req.on("error", () => {
+      isAborted = true;
+    });
+
+    let bytesSent = 0;
+    const maxBytes = 150 * 1024 * 1024; // 150 MB limit
+    const chunkSize = 256 * 1024; // 256 KB chunks
+
+    const writeData = () => {
+      if (isAborted || req.destroyed || res.writableEnded) return;
+
+      try {
+        while (bytesSent < maxBytes) {
+          if (isAborted || req.destroyed || res.writableEnded) return;
+
+          const offset = bytesSent % (speedTestBuffer.length - chunkSize);
+          const chunk = speedTestBuffer.subarray(offset, offset + chunkSize);
+
+          const ok = res.write(chunk);
+          bytesSent += chunkSize;
+
+          if (!ok) {
+            res.once("drain", writeData);
+            return;
+          }
+        }
+        res.end();
+      } catch (err) {
+        console.warn("Speed test download stream interrupted safely:", err);
+      }
+    };
+
+    writeData();
+  });
+
   // Explicit, high-priority routes for Google Search Console and SEO crawlers
   app.get("/sitemap.xml", (req, res) => {
     const host = req.hostname.toLowerCase();
