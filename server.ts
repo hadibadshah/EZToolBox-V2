@@ -411,14 +411,37 @@ async function startServer() {
 
   // Explicit, high-priority routes for Google Search Console and SEO crawlers
   app.get("/sitemap.xml", (req, res) => {
-    const distFile = path.join(process.cwd(), "dist", "sitemap.xml");
-    const publicFile = path.join(process.cwd(), "public", "sitemap.xml");
+    const host = req.hostname.toLowerCase();
+    let sitemapFilename = "sitemap.xml";
+
+    if (host.includes("qr.eztoolbox.xyz") || host.includes("qr.")) {
+      sitemapFilename = "sitemap-qr.xml";
+    } else if (host.includes("compress.eztoolbox.xyz") || host.includes("compress.")) {
+      sitemapFilename = "sitemap-compress.xml";
+    } else if (host.includes("ip.eztoolbox.xyz") || host.includes("ip.")) {
+      sitemapFilename = "sitemap-ip.xml";
+    } else if (host.includes("speed.eztoolbox.xyz") || host.includes("speed.")) {
+      sitemapFilename = "sitemap-speed.xml";
+    }
+
+    const distFile = path.join(process.cwd(), "dist", sitemapFilename);
+    const publicFile = path.join(process.cwd(), "public", sitemapFilename);
     const targetFile = fs.existsSync(distFile) ? distFile : publicFile;
 
     if (fs.existsSync(targetFile)) {
       res.setHeader("Content-Type", "application/xml");
       return res.sendFile(targetFile);
     }
+
+    // Fallback to default sitemap.xml if specific sitemap isn't found
+    const fallbackDist = path.join(process.cwd(), "dist", "sitemap.xml");
+    const fallbackPublic = path.join(process.cwd(), "public", "sitemap.xml");
+    const fallbackFile = fs.existsSync(fallbackDist) ? fallbackDist : fallbackPublic;
+    if (fs.existsSync(fallbackFile)) {
+      res.setHeader("Content-Type", "application/xml");
+      return res.sendFile(fallbackFile);
+    }
+
     return res.status(404).send("Sitemap not found");
   });
 

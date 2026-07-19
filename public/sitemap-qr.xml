@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- EZ Toolbox - Main Domain (YouTube Analyzer & Thumbnail Downloader) -->
+  <!-- EZ QR Code Generator & Scanner -->
   <url>
-    <loc>https://eztoolbox.xyz/</loc>
+    <loc>https://qr.eztoolbox.xyz/</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -10,31 +10,31 @@
 
   <!-- Core Pages -->
   <url>
-    <loc>https://eztoolbox.xyz/about</loc>
+    <loc>https://qr.eztoolbox.xyz/about</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://eztoolbox.xyz/contact</loc>
+    <loc>https://qr.eztoolbox.xyz/contact</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://eztoolbox.xyz/privacy</loc>
+    <loc>https://qr.eztoolbox.xyz/privacy</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://eztoolbox.xyz/terms</loc>
+    <loc>https://qr.eztoolbox.xyz/terms</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://eztoolbox.xyz/articles</loc>
+    <loc>https://qr.eztoolbox.xyz/articles</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -42,19 +42,19 @@
 
   <!-- SEO Blog Articles -->
   <url>
-    <loc>https://eztoolbox.xyz/articles/youtube-tag-extractor-seo-optimization</loc>
+    <loc>https://qr.eztoolbox.xyz/articles/how-to-create-custom-qr-codes-with-logo-branding</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://eztoolbox.xyz/articles/youtube-monetization-cpm-rates-country</loc>
+    <loc>https://qr.eztoolbox.xyz/articles/offline-to-online-marketing-qr-codes-guide</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://eztoolbox.xyz/articles/social-blade-alternative-track-subscriber-growth</loc>
+    <loc>https://qr.eztoolbox.xyz/articles/qr-code-formats-static-dynamic-vcard-security</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
