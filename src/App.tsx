@@ -805,7 +805,7 @@ export default function App() {
     if (isDev) return false; // Force disabled in developer preview mode to prevent click blocks & iframe overlays!
 
     const saved = localStorage.getItem("yt_ads_enabled");
-    return saved === null ? false : saved === "true"; // Default to false on first-load
+    return saved === null ? true : saved === "true"; // Default to true on first-load for live site visitors!
   });
   const [adsterraBannerKey, setAdsterraBannerKey] = useState(() => {
     return localStorage.getItem("yt_adsterra_banner_key") || "4c9a72ecc1945050df1c685db5ad1f46";
