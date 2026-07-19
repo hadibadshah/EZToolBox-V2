@@ -611,38 +611,64 @@ async function startServer() {
         let html = fs.readFileSync(indexPath, "utf-8");
         const reqPath = req.path;
         const host = req.hostname.toLowerCase();
-        const isQrSubdomain = host.includes("qr.eztoolbox.xyz") || host.includes("qr.");
+        
+        // Subdomain detection
+        const isQrSubdomain = host.includes("qr.eztoolbox.xyz") || host.includes("qr.") || host.startsWith("qr-");
+        const isCompressSubdomain = host.includes("compress.eztoolbox.xyz") || host.includes("compress.") || host.startsWith("compress-");
+        const isIpSubdomain = host.includes("ip.eztoolbox.xyz") || host.includes("ip.") || host.startsWith("ip-");
+        const isConverterSubdomain = host.includes("converter.eztoolbox.xyz") || host.includes("converter.") || host.includes("speed.eztoolbox.xyz") || host.includes("speed.") || host.startsWith("converter-") || host.startsWith("speed-");
 
-        // Default Meta Tags (Home Page)
-        let title = "EZ Toolbox 🛠️ — YouTube Analyzer & Thumbnail Downloader";
-        let description = "Analyze any YouTube video or channel instantly. Get views, upload date, tags, channel ranking, category, estimated earnings, and download thumbnails in HD for free!";
-        let keywords = "youtube analyzer, youtube thumbnail downloader, youtube tags viewer, download youtube thumbnails hd, ez toolbox, free youtube tools";
+        // Default Meta Tags (YouTube Analyzer - Home Page)
+        let title = "EZ Toolbox 🛠️ — YouTube SEO Analyzer & Thumbnail Downloader";
+        let description = "Analyze any YouTube video or channel instantly. Get real-time views, upload date, hidden tags, categories, subscriber milestones, estimated earnings, and download thumbnails in HD for free!";
+        let keywords = "youtube video analyzer, youtube tag extractor, channel growth analytics, download youtube thumbnails hd, ez toolbox, free youtube tools, social blade alternative";
         let url = `https://eztoolbox.xyz${reqPath}`;
+        let ogImage = "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=1200&h=630&q=80";
+        let siteName = "EZ Toolbox";
 
         if (isQrSubdomain) {
-          title = "EZ QR Code 🎯 — Free Custom QR Code Generator & Scanner";
-          description = "Generate custom high-resolution QR codes with your own brand logo, foreground/background colors, and styling presets. Decode and scan QR codes from image files or webcam streams for free!";
-          keywords = "qr code generator, free qr generator, custom qr code with logo, qr scanner online, scan qr code, ez qr code, ez toolbox";
+          title = "EZ Custom QR Code Generator & Scanner 🎯 — EZToolBox";
+          description = "Generate custom high-resolution QR codes with your brand logo, custom colors, and styled presets. Decode and scan QR codes instantly from image files or live webcam streams for free!";
+          keywords = "qr code generator, free qr generator, custom qr code with logo, qr scanner online, scan qr code webcam, ez qr code, ez toolbox";
           url = `https://qr.eztoolbox.xyz${reqPath}`;
+          ogImage = "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=1200&h=630&q=80";
+          siteName = "EZ QR Code";
+        } else if (isCompressSubdomain) {
+          title = "EZ Bulk Image Compressor 🖼️ — Offline-First File Compression";
+          description = "Compress JPEG, PNG, WEBP, and SVG images in bulk. Reduce file size up to 90% while keeping high visual quality. Runs entirely locally and privately in your browser!";
+          keywords = "bulk image compressor, free image compression, compress jpeg online, compress webp in bulk, reduce image size, private image optimization, ez toolbox";
+          url = `https://compress.eztoolbox.xyz${reqPath}`;
+          ogImage = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&h=630&q=80";
+          siteName = "EZ Image Compressor";
+        } else if (isIpSubdomain) {
+          title = "EZ What Is My IP & Geolocation Checker 🌐 — EZToolBox";
+          description = "Check your public IP address, ISP provider, country, city, and exact coordinates on a live interactive map. Run network speed tests, DNS lookups, and diagnostic pings for free!";
+          keywords = "what is my ip, ip address lookup, ip location tracker, public ip address, network isp diagnostic, geolocation coordinates, dns lookup, ping tester, ez toolbox";
+          url = `https://ip.eztoolbox.xyz${reqPath}`;
+          ogImage = "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&h=630&q=80";
+          siteName = "EZ IP Finder";
+        } else if (isConverterSubdomain) {
+          title = "EZ Universal Unit Converter & Calculator 🧮 — EZToolBox";
+          description = "Convert units of length, area, volume, mass, temperature, speed, time, and data storage instantly. Use custom calculators and equation solvers online for free!";
+          keywords = "universal units converter, free conversion calculator, metric to imperial, math calculation widgets, weight and distance converter, ez toolbox";
+          url = `https://converter.eztoolbox.xyz${reqPath}`;
+          ogImage = "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=1200&h=630&q=80";
+          siteName = "EZ Universal Converter";
         }
 
-        // Match pages and override metadata
+        // Match sub-pages and override specific metadata as needed (mainly for YouTube sub-pages and blog posts)
         if (reqPath === "/about") {
-          title = "About Us — EZ Toolbox 🛠️";
-          description = "Learn about EZ Toolbox: the ultimate, professional-grade digital toolkit engineered to simplify and optimize your digital creator and YouTube SEO journey.";
-          keywords = "about ez toolbox, youtube seo, metadata extraction, channel analytics, digital creator tools";
+          title = `About Us — ${siteName} 🛠️`;
+          description = `Learn about ${siteName}: the ultimate, professional-grade digital tool engineered to simplify and optimize your productivity journey.`;
         } else if (reqPath === "/contact") {
-          title = "Contact Us / Live Support — EZ Toolbox 🛠️";
-          description = "Get in touch with EZ Toolbox. Reach out to our official WhatsApp support and email helpdesk for inquiries, bug reports, and custom assistance.";
-          keywords = "contact ez toolbox, youtube support, whatsapp helpdesk, email support";
+          title = `Contact Us & Helpdesk — ${siteName} 🛠️`;
+          description = `Get in touch with the official support helpdesk for ${siteName} for inquiries, custom assistance, or feedback.`;
         } else if (reqPath === "/privacy") {
-          title = "Privacy Policy — EZ Toolbox 🛠️";
-          description = "Read the EZ Toolbox Privacy Policy. Learn how we handle your preferences, cache local keys, comply with YouTube API v3, and ensure user trust.";
-          keywords = "privacy policy, adsense compliance, youtube api compliance, local-first security";
+          title = `Privacy Policy — ${siteName} 🛠️`;
+          description = `Review the official Privacy Policy for ${siteName}. Learn how we ensure local-first data processing and user privacy.`;
         } else if (reqPath === "/terms") {
-          title = "Terms & Conditions — EZ Toolbox 🛠️";
-          description = "Review the terms of service and agreement for utilizing the EZ Toolbox video tag extractor, thumbnail downloader, and channel metrics analyzer.";
-          keywords = "terms of service, user agreement, api quota liability, disclaimer of content warranties";
+          title = `Terms of Service — ${siteName} 🛠️`;
+          description = `Review the user agreement and general Terms & Conditions for utilizing our digital utilities safely.`;
         } else if (reqPath === "/articles") {
           title = "SEO Growth Articles & Creators Blog — EZ Toolbox 🛠️";
           description = "Master the YouTube algorithm, rank videos higher, learn search engine optimization (SEO) tactics, and decode monetization RPM/CPM rates by country.";
@@ -661,10 +687,31 @@ async function startServer() {
           keywords = "Social Blade alternative, youtube channel analytics tool, daily subscriber growth tracker, estimate youtube earnings";
         }
 
-        const ogImage = isQrSubdomain ? "https://qr.eztoolbox.xyz/assets/og-image.png" : "https://eztoolbox.xyz/assets/og-image.png";
-        const siteName = isQrSubdomain ? "EZ QR Code" : "EZ Toolbox";
+        // Dynamically check if a custom uploaded PNG/JPG is placed inside public/assets directory
+        let localOgPath = "";
+        if (isQrSubdomain) {
+          localOgPath = "og-image-qr.png";
+        } else if (isCompressSubdomain) {
+          localOgPath = "og-image-compress.png";
+        } else if (isIpSubdomain) {
+          localOgPath = "og-image-ip.png";
+        } else if (isConverterSubdomain) {
+          localOgPath = "og-image-converter.png";
+        } else {
+          localOgPath = "og-image-yt.png";
+        }
 
-        // Construct complete, standard SEO & Open Graph Tags for WhatsApp / Facebook
+        const absoluteLocalOg = path.join(distPath, "assets", localOgPath);
+        if (fs.existsSync(absoluteLocalOg)) {
+          const domainUrl = isQrSubdomain ? "https://qr.eztoolbox.xyz" :
+                            isCompressSubdomain ? "https://compress.eztoolbox.xyz" :
+                            isIpSubdomain ? "https://ip.eztoolbox.xyz" :
+                            isConverterSubdomain ? "https://converter.eztoolbox.xyz" :
+                            "https://eztoolbox.xyz";
+          ogImage = `${domainUrl}/assets/${localOgPath}`;
+        }
+
+        // Construct complete, standard SEO & Open Graph Tags for WhatsApp / Facebook / Telegram
         const seoTags = `
     <!-- Primary SEO Meta Tags -->
     <title>${title}</title>
