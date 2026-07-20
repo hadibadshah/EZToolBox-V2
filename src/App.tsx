@@ -697,7 +697,7 @@ export default function App() {
 
   const [activeTab, setActiveTab] = useState<"video" | "channel">("video");
   const [videoUrlInput, setVideoUrlInput] = useState("");
-  const [channelUrlInput, setChannelUrlInput] = useState("");
+  const [channelUrlInput, setChannelUrlInput] = useState("https://www.youtube.com/@TradingInsightsWithWadeed");
   const [currentPage, setCurrentPageInternal] = useState<"home" | "about" | "contact" | "privacy" | "terms" | "articles">(() => {
     const path = window.location.pathname;
     if (path === "/about") return "about";
@@ -975,7 +975,7 @@ export default function App() {
   // Load default video and channel on mount to showcase analytics and thumbnails nicely
   useEffect(() => {
     handleAnalyzeVideo(undefined, "https://www.youtube.com/watch?v=dIl_x9GNmG8");
-    handleAnalyzeChannel(undefined, "https://www.youtube.com/@ChroniclesReborn-736");
+    handleAnalyzeChannel(undefined, "https://www.youtube.com/@TradingInsightsWithWadeed");
   }, []);
 
   // Analyze Channel API Call with client fallback
