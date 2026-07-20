@@ -399,7 +399,10 @@ async function startServer() {
       const arrayBuffer = await response.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      res.setHeader("Content-Disposition", `attachment; filename="${encodeURIComponent(downloadFilename)}"`);
+      // Sanitize the filename to make sure it only contains highly compatible safe characters
+      const safeFilename = downloadFilename.replace(/[^a-zA-Z0-9_.-]/g, "_");
+
+      res.setHeader("Content-Disposition", `attachment; filename="${safeFilename}"`);
       res.setHeader("Content-Type", response.headers.get("content-type") || "image/jpeg");
       res.setHeader("Content-Length", buffer.length);
       return res.send(buffer);

@@ -697,7 +697,7 @@ export default function App() {
 
   const [activeTab, setActiveTab] = useState<"video" | "channel">("video");
   const [videoUrlInput, setVideoUrlInput] = useState("");
-  const [channelUrlInput, setChannelUrlInput] = useState("https://www.youtube.com/@TradingInsightsWithWadeed");
+  const [channelUrlInput, setChannelUrlInput] = useState("");
   const [currentPage, setCurrentPageInternal] = useState<"home" | "about" | "contact" | "privacy" | "terms" | "articles">(() => {
     const path = window.location.pathname;
     if (path === "/about") return "about";
@@ -975,7 +975,7 @@ export default function App() {
   // Load default video and channel on mount to showcase analytics and thumbnails nicely
   useEffect(() => {
     handleAnalyzeVideo(undefined, "https://www.youtube.com/watch?v=dIl_x9GNmG8");
-    handleAnalyzeChannel(undefined, "https://www.youtube.com/@TradingInsightsWithWadeed");
+    handleAnalyzeChannel(undefined, "https://www.youtube.com/@ChroniclesReborn-736");
   }, []);
 
   // Analyze Channel API Call with client fallback
@@ -1056,7 +1056,10 @@ export default function App() {
     try {
       // First, attempt downloading through local express proxy endpoint if running
       const response = await fetch(`/api/download/thumbnail?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`);
-      if (response.ok) {
+      const contentType = response.headers.get("content-type") || "";
+      
+      // Ensure the response is successful and is actually an image (prevents downloading index.html on static hosts)
+      if (response.ok && contentType.startsWith("image/")) {
         const blob = await response.blob();
         const blobUrl = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -1067,6 +1070,8 @@ export default function App() {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(blobUrl);
         return;
+      } else {
+        console.warn("Proxy did not return a valid image. Falling back to direct browser download.");
       }
     } catch (err) {
       console.warn("Proxy download failed, trying direct browser download", err);
