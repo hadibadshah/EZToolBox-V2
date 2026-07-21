@@ -89,11 +89,27 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
 
     try {
       const res = await fetch(`/api/tiktok/info?url=${encodeURIComponent(normalizedUrl)}`);
+      
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("text/html")) {
+        throw new Error("IFRAME_COOKIE_RESTRICTION");
+      }
+
       if (!res.ok) {
         throw new Error("Failed to communicate with TikTok API proxy server.");
       }
 
-      const json: TiktokVideoData = await res.json();
+      const responseText = await res.text();
+      let json: TiktokVideoData;
+      try {
+        json = JSON.parse(responseText);
+      } catch (parseErr) {
+        if (responseText.trim().startsWith("<!DOCTYPE") || responseText.trim().startsWith("<html")) {
+          throw new Error("IFRAME_COOKIE_RESTRICTION");
+        }
+        throw new Error("Invalid response format received from server.");
+      }
+
       if (json.code !== 0 || !json.data) {
         throw new Error(json.msg || "Invalid response from TikTok API. Check the URL.");
       }
@@ -101,7 +117,11 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
       setVideoData(json.data);
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "An unexpected error occurred. Please verify your internet connection or try again.");
+      if (err.message === "IFRAME_COOKIE_RESTRICTION") {
+        setError("IFRAME_COOKIE_RESTRICTION");
+      } else {
+        setError(err.message || "An unexpected error occurred. Please verify your internet connection or try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -110,20 +130,14 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
   const triggerDownload = async (directUrl: string, filename: string, fieldKey: string) => {
     try {
       setDownloadingField(fieldKey);
-      const downloadUrl = `/api/download/tiktok?url=${encodeURIComponent(directUrl)}&filename=${encodeURIComponent(filename)}`;
       
-      // Trigger native browser download by pointing window location to the proxy
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Open direct high-speed CDN link in a new tab to bypass server proxy and protect Hostinger hosting limits
+      window.open(directUrl, "_blank");
     } catch (err) {
-      console.error("Failed to download file:", err);
+      console.error("Failed to open download link:", err);
     } finally {
-      // Simulate download feedback delay
-      setTimeout(() => setDownloadingField(null), 2000);
+      // Simulate click feedback delay
+      setTimeout(() => setDownloadingField(null), 1500);
     }
   };
 
@@ -218,10 +232,40 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="flex items-start gap-2.5 p-3.5 mt-4 bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/20 dark:border-red-900/30 dark:text-red-400 rounded-xl text-xs font-semibold"
+              className="w-full mt-4"
             >
-              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-red-500" />
-              <span>{error}</span>
+              {error === "IFRAME_COOKIE_RESTRICTION" ? (
+                <div className="flex flex-col gap-3.5 p-4 bg-amber-50 border border-amber-200 text-amber-900 dark:bg-amber-950/20 dark:border-amber-900/30 dark:text-amber-300 rounded-xl text-xs md:text-sm font-medium shadow-sm">
+                  <div className="flex items-start gap-2.5">
+                    <AlertCircle className="h-5 w-5 shrink-0 mt-0.5 text-amber-500 animate-pulse" />
+                    <div>
+                      <p className="font-bold text-gray-900 dark:text-white">Iframe Browser Block Active</p>
+                      <p className="mt-1 text-slate-600 dark:text-neutral-400 leading-relaxed font-semibold">
+                        Due to modern browser security guidelines (preventing cross-origin session storage/cookies inside iframes), the TikTok proxy needs a quick session initialization.
+                      </p>
+                      <p className="mt-1 text-slate-500 dark:text-neutral-500 font-semibold text-xs">
+                        Please open the app in a new tab once to authorize the connection, then you can download any video immediately!
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2 mt-1">
+                    <a
+                      href={window.location.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-lg text-xs font-bold transition-all shadow-md cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      <span>Open in New Tab & Authorize</span>
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-start gap-2.5 p-3.5 bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/20 dark:border-red-900/30 dark:text-red-400 rounded-xl text-xs font-semibold">
+                  <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-red-500" />
+                  <span>{error}</span>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -337,6 +381,22 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
 
                 {/* Direct File Download Call to Action List */}
                 <div className="flex flex-col gap-3">
+                  {/* Safe Hostinger Download Compliance Guide */}
+                  <div className="p-4 bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-start gap-3">
+                    <Sparkles className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
+                    <div>
+                      <h5 className="text-xs font-bold text-emerald-800 dark:text-emerald-400">
+                        ⚡ 100% Safe Direct High-Speed Download
+                      </h5>
+                      <p className="text-[11px] text-slate-600 dark:text-slate-300 font-semibold leading-relaxed mt-1">
+                        To protect your hosting from CPU/bandwidth suspension risks on Hostinger shared servers, videos are served directly from TikWM's high-speed CDN.
+                      </p>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold leading-relaxed mt-1.5">
+                        <strong>How to Save:</strong> Click the <strong>"Open & Save"</strong> button. The video will open. Simply tap the three dots <strong>(⋮)</strong> and select <strong>"Download"</strong> (or right-click the video and choose <strong>"Save Video As..."</strong>).
+                      </p>
+                    </div>
+                  </div>
+
                   <h4 className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest border-b border-slate-100 dark:border-neutral-800 pb-1.5 mb-1">
                     Download Options
                   </h4>
@@ -371,12 +431,12 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
                         {downloadingField === 'play' ? (
                           <>
                             <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                            <span>Downloading...</span>
+                            <span>Opening...</span>
                           </>
                         ) : (
                           <>
-                            <Download className="h-3.5 w-3.5" />
-                            <span>Download (Proxy)</span>
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            <span>Open & Save Video</span>
                           </>
                         )}
                       </button>
@@ -387,7 +447,7 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
                         rel="noreferrer"
                         className="px-3 py-2 border border-slate-200 hover:border-slate-300 dark:border-neutral-800 dark:hover:border-neutral-700 text-gray-700 dark:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-950 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 text-center"
                       >
-                        <ExternalLink className="h-3.5 w-3.5" />
+                        <Download className="h-3.5 w-3.5" />
                         <span>Direct CDN Link</span>
                       </a>
                     </div>
@@ -424,12 +484,12 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
                           {downloadingField === 'hdplay' ? (
                             <>
                               <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                              <span>Downloading...</span>
+                              <span>Opening HD...</span>
                             </>
                           ) : (
                             <>
-                              <Download className="h-3.5 w-3.5" />
-                              <span>Download HD (Proxy)</span>
+                              <ExternalLink className="h-3.5 w-3.5" />
+                              <span>Open & Save HD</span>
                             </>
                           )}
                         </button>
@@ -440,7 +500,7 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
                           rel="noreferrer"
                           className="px-3 py-2 border border-slate-200 hover:border-slate-300 dark:border-neutral-800 dark:hover:border-neutral-700 text-gray-700 dark:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-950 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 text-center"
                         >
-                          <ExternalLink className="h-3.5 w-3.5" />
+                          <Download className="h-3.5 w-3.5" />
                           <span>Direct HD Link</span>
                         </a>
                       </div>
@@ -477,12 +537,12 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
                         {downloadingField === 'music' ? (
                           <>
                             <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                            <span>Downloading...</span>
+                            <span>Opening...</span>
                           </>
                         ) : (
                           <>
-                            <Download className="h-3.5 w-3.5" />
-                            <span>Download MP3 (Proxy)</span>
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            <span>Open & Save MP3</span>
                           </>
                         )}
                       </button>
@@ -493,7 +553,7 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
                         rel="noreferrer"
                         className="px-3 py-2 border border-slate-200 hover:border-slate-300 dark:border-neutral-800 dark:hover:border-neutral-700 text-gray-700 dark:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-950 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 text-center"
                       >
-                        <ExternalLink className="h-3.5 w-3.5" />
+                        <Download className="h-3.5 w-3.5" />
                         <span>Direct Audio Link</span>
                       </a>
                     </div>
@@ -529,12 +589,12 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
                         {downloadingField === 'cover' ? (
                           <>
                             <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                            <span>Downloading...</span>
+                            <span>Opening...</span>
                           </>
                         ) : (
                           <>
-                            <Download className="h-3.5 w-3.5" />
-                            <span>Download Cover (Proxy)</span>
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            <span>Open & Save Cover</span>
                           </>
                         )}
                       </button>
@@ -545,26 +605,12 @@ export const TiktokDownloader: React.FC<TiktokDownloaderProps> = ({ adsEnabled }
                         rel="noreferrer"
                         className="px-3 py-2 border border-slate-200 hover:border-slate-300 dark:border-neutral-800 dark:hover:border-neutral-700 text-gray-700 dark:text-neutral-300 hover:bg-slate-50 dark:hover:bg-neutral-950 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 text-center"
                       >
-                        <ExternalLink className="h-3.5 w-3.5" />
+                        <Download className="h-3.5 w-3.5" />
                         <span>Direct Image Link</span>
                       </a>
                     </div>
                   </div>
 
-                  {/* Why direct links might have watermark info card */}
-                  <div className="p-3.5 bg-yellow-500/5 dark:bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-start gap-2.5 mt-2">
-                    <Sparkles className="h-4.5 w-4.5 text-yellow-500 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-[10px] font-extrabold text-yellow-700 dark:text-yellow-400 uppercase tracking-wider">
-                        Watermark & Quality Guide
-                      </h5>
-                      <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium leading-relaxed mt-1">
-                        👉 Always use the <strong className="text-gray-900 dark:text-white">Download (Proxy)</strong> option for <strong>100% Watermark-Free</strong> video downloads. This routes the download securely through our server using your custom premium API configuration to strip watermarks completely.
-                        <br />
-                        ⚠️ Opening <strong>Direct CDN Links</strong> in your browser can sometimes show watermarks because TikTok's CDN detects direct browser loads without premium headers and forces a watermark fallback.
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </div>
 
