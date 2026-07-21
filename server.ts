@@ -413,29 +413,10 @@ async function startServer() {
   });
 
   // ----------------------------------------------------
-  // API Endpoint: TikTok Downloader Proxy
+  // API Endpoint: TikTok Downloader Proxy (Disabled)
   // ----------------------------------------------------
   app.get("/api/tiktok/info", async (req, res) => {
-    try {
-      const { url } = req.query;
-      if (!url || typeof url !== "string") {
-        return res.status(400).json({ error: "Missing TikTok video URL" });
-      }
-
-      const tikTokApiKey = process.env.TIKTOK_API_KEY || "32b97437f6152caa0e5e02ea20715751";
-      const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}&key=${tikTokApiKey}`;
-      
-      const apiRes = await fetch(apiUrl);
-      if (!apiRes.ok) {
-        throw new Error(`TikWM API responded with status ${apiRes.status}`);
-      }
-      
-      const data = await apiRes.json();
-      return res.json(data);
-    } catch (error: any) {
-      console.error("TikTok API fetch error:", error);
-      return res.status(500).json({ error: error.message || "Failed to fetch video details from TikTok API" });
-    }
+    return res.status(403).json({ error: "TikTok Downloader service has been completely disabled on this hosting server to comply with terms and prevent account suspension." });
   });
 
   // Helper: Fetch with manual redirect handling to preserve Referer and User-Agent headers
@@ -459,7 +440,6 @@ async function startServer() {
         // Resolve relative redirect URLs if any
         currentUrl = new URL(location, currentUrl).toString();
         redirects++;
-        console.log(`[TikTok Proxy] Following redirect (${redirects}/${maxRedirects}) to: ${currentUrl}`);
         continue;
       }
 
@@ -470,7 +450,7 @@ async function startServer() {
   }
 
   app.get("/api/download/tiktok", async (req, res) => {
-    return res.status(403).send("Server-side video streaming and download proxying has been disabled to prevent Hostinger account suspension. Please use the direct high-speed client-side download options instead.");
+    return res.status(403).send("TikTok Downloader service has been completely disabled on this hosting server to comply with terms and prevent account suspension.");
   });
 
   // API Endpoint: Get user's actual client IP, ISP, and Location
