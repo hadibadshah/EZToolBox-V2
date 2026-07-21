@@ -4,7 +4,7 @@ import { ArrowLeft, Mail, Phone, ExternalLink, Shield, FileText, Info, BookOpen,
 interface PagesProps {
   currentPage: "about" | "contact" | "privacy" | "terms" | "articles";
   setCurrentPage: (page: "home" | "about" | "contact" | "privacy" | "terms" | "articles") => void;
-  subdomainView?: "yt" | "qr" | "compress" | "ip" | "converter";
+  subdomainView?: "yt" | "qr" | "compress" | "ip" | "converter" | "tiktok";
 }
 
 export const Pages: React.FC<PagesProps> = ({ currentPage, setCurrentPage, subdomainView = "yt" }) => {

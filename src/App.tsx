@@ -7,6 +7,7 @@ import { QrGenerator } from "./components/QrGenerator";
 import { ImageCompressor } from "./components/ImageCompressor";
 import { IpFinder } from "./components/IpFinder";
 import { UniversalConverter } from "./components/UniversalConverter";
+import { TiktokDownloader } from "./components/TiktokDownloader";
 import { 
   Youtube, 
   Search, 
@@ -286,6 +287,13 @@ const NETWORK_TOOLS: FreeTool[] = [
     icon: "Calculator",
     url: "https://converter.eztoolbox.xyz",
     colorClass: "bg-blue-600"
+  },
+  {
+    name: "EZ TikTok Downloader",
+    description: "Download TikTok videos without watermarks in full HD quality, extract audio MP3s, and retrieve artwork covers instantly.",
+    icon: "Video",
+    url: "https://tiktok.xyz",
+    colorClass: "bg-cyan-500"
   }
 ];
 
@@ -397,6 +405,25 @@ const CONVERTER_FAQ_ITEMS: FAQItem[] = [
   {
     question: "How do I view my calculation history in the calculator?",
     answer: "Our modern interactive calculator displays a scrollable history tape above the primary numbers. You can see your previous operations, click to reuse past results, or clear the history tape at any time."
+  }
+];
+
+const TIKTOK_FAQ_ITEMS: FAQItem[] = [
+  {
+    question: "How do I download a TikTok video without a watermark?",
+    answer: "Simply copy the video's link from the share menu in the TikTok app or your browser, paste it into our search bar above, and click 'Download Video'. The tool automatically queries premium servers to extract the original full HD video file completely free of any watermarks or channel logos."
+  },
+  {
+    question: "Does this TikTok downloader work on mobile devices (Android/iPhone)?",
+    answer: "Yes! The EZ TikTok Downloader is fully mobile-responsive and web-based. It runs flawlessly in any mobile browser on Android, iOS (iPhone/iPad), macOS, and Windows without requiring any app installations or accounts."
+  },
+  {
+    question: "Can I extract and download the background music track as an MP3?",
+    answer: "Yes, our downloader isolates the background audio track from the video. Just click the 'Extract Background Music (MP3 Audio)' button under the download options to get a high-quality stereo audio file instantly."
+  },
+  {
+    question: "Is there any limit to the number of TikTok video downloads?",
+    answer: "No, our service is completely unlimited and free. You can analyze and download as many videos and audio tracks as you like, anytime."
   }
 ];
 
@@ -628,7 +655,7 @@ async function clientFetchChannel(url: string, keyToUse: string): Promise<Channe
 
 export default function App() {
   // Automatic Subdomain & Domain detection
-  const [subdomainView, setSubdomainView] = useState<"yt" | "qr" | "compress" | "ip" | "converter">(() => {
+  const [subdomainView, setSubdomainView] = useState<"yt" | "qr" | "compress" | "ip" | "converter" | "tiktok">(() => {
     const hostname = window.location.hostname.toLowerCase();
     if (hostname.includes("qr.eztoolbox.xyz") || hostname.includes("qr.")) {
       return "qr";
@@ -638,6 +665,9 @@ export default function App() {
     }
     if (hostname.includes("ip.eztoolbox.xyz") || hostname.includes("ip.")) {
       return "ip";
+    }
+    if (hostname.includes("tiktok.eztoolbox.xyz") || hostname.includes("tiktok.")) {
+      return "tiktok";
     }
     if (hostname.includes("speed.eztoolbox.xyz") || hostname.includes("speed.") || hostname.includes("converter.")) {
       return "converter";
@@ -659,17 +689,20 @@ export default function App() {
     const colorTool = NETWORK_TOOLS[3];
     const ipTool = NETWORK_TOOLS[4];
     const speedTool = NETWORK_TOOLS[5];
+    const tiktokTool = NETWORK_TOOLS[6];
 
     if (subdomainView === "yt") {
-      return [speedTool, qrTool, compressTool, ipTool, pdfTool, colorTool];
+      return [tiktokTool, speedTool, qrTool, compressTool, ipTool, pdfTool];
     } else if (subdomainView === "qr") {
-      return [ytTool, speedTool, compressTool, ipTool, pdfTool, colorTool];
+      return [ytTool, tiktokTool, speedTool, compressTool, ipTool, pdfTool];
     } else if (subdomainView === "compress") {
-      return [ytTool, speedTool, qrTool, ipTool, pdfTool, colorTool];
+      return [ytTool, tiktokTool, speedTool, qrTool, ipTool, pdfTool];
     } else if (subdomainView === "ip") {
-      return [ytTool, speedTool, qrTool, compressTool, pdfTool, colorTool];
+      return [ytTool, tiktokTool, speedTool, qrTool, compressTool, pdfTool];
+    } else if (subdomainView === "tiktok") {
+      return [ytTool, speedTool, qrTool, compressTool, ipTool, pdfTool];
     } else { // converter
-      return [ytTool, qrTool, compressTool, ipTool, pdfTool, colorTool];
+      return [ytTool, tiktokTool, qrTool, compressTool, ipTool, pdfTool];
     }
   })();
 
@@ -681,7 +714,9 @@ export default function App() {
         ? IP_FAQ_ITEMS
         : subdomainView === "converter"
           ? CONVERTER_FAQ_ITEMS
-          : FAQ_ITEMS;
+          : subdomainView === "tiktok"
+            ? TIKTOK_FAQ_ITEMS
+            : FAQ_ITEMS;
 
   // Check if running in development sandbox environment (e.g. AI Studio preview)
   const isDevelopment = (() => {
@@ -816,20 +851,22 @@ export default function App() {
 
   // Sync the adsterra keys and social bar urls when the subdomainView changes
   useEffect(() => {
-    const bannerKeys: Record<"yt" | "qr" | "compress" | "ip" | "converter", string> = {
+    const bannerKeys: Record<"yt" | "qr" | "compress" | "ip" | "converter" | "tiktok", string> = {
       yt: "4c9a72ecc1945050df1c685db5ad1f46",
       qr: "3021690b027b63131950c55585b3e871",
       compress: "fec6a1716171a197192b70e3bf7351e1",
       ip: "28fa5b133d1e8c669ee3eeb7efa5667f",
-      converter: "33995635c87250fab03e2e29d59bb2f3"
+      converter: "33995635c87250fab03e2e29d59bb2f3",
+      tiktok: "33995635c87250fab03e2e29d59bb2f3"
     };
 
-    const socialUrls: Record<"yt" | "qr" | "compress" | "ip" | "converter", string> = {
+    const socialUrls: Record<"yt" | "qr" | "compress" | "ip" | "converter" | "tiktok", string> = {
       yt: "https://pl30252585.effectivecpmnetwork.com/94/47/9b/94479bdb2acf4104d1a18b7942b19b96.js",
       qr: "https://pl30254129.effectivecpmnetwork.com/6c/0b/72/6c0b7269d73d4e59bbca9b6547f1046d.js",
       compress: "https://pl30435866.effectivecpmnetwork.com/8a/11/2f/8a112f3aa228748d641d161bf78f216c.js",
       ip: "https://pl30435876.effectivecpmnetwork.com/c5/d4/25/c5d42549abdfc4c8b71bd0a7b5780260.js",
-      converter: "https://pl30435884.effectivecpmnetwork.com/c3/5a/e6/c35ae6798df727b9077069e2f8698b59.js"
+      converter: "https://pl30435884.effectivecpmnetwork.com/c3/5a/e6/c35ae6798df727b9077069e2f8698b59.js",
+      tiktok: "https://pl30435884.effectivecpmnetwork.com/c3/5a/e6/c35ae6798df727b9077069e2f8698b59.js"
     };
 
     const currentBannerKey = bannerKeys[subdomainView] || bannerKeys.yt;
@@ -1107,6 +1144,7 @@ export default function App() {
       case "Globe": return <Globe className={className} id="icon-globe" />;
       case "Calculator": return <Calculator className={className} id="icon-converter" />;
       case "Youtube": return <Youtube className={className} id="icon-youtube" />;
+      case "Video": return <Video className={className} id="icon-tiktok" />;
       default: return <Grid className={className} id="icon-default" />;
     }
   };
@@ -1185,6 +1223,16 @@ export default function App() {
               >
                 converter (Universal Converter)
               </button>
+              <button
+                onClick={() => setSubdomainView("tiktok")}
+                className={`px-2.5 py-1 rounded-md text-[11px] transition-all cursor-pointer shrink-0 ${
+                  subdomainView === "tiktok"
+                    ? "bg-white text-emerald-800 shadow-sm"
+                    : "text-emerald-100 hover:text-white"
+                }`}
+              >
+                tiktok (TikTok Downloader)
+              </button>
             </div>
           </div>
         </div>
@@ -1232,6 +1280,8 @@ export default function App() {
                 <Globe className="h-6 w-6" id="brand-ip-icon" />
               ) : subdomainView === "converter" ? (
                 <Calculator className="h-6 w-6" id="brand-converter-icon" />
+              ) : subdomainView === "tiktok" ? (
+                <Video className="h-6 w-6" id="brand-tiktok-icon" />
               ) : (
                 <Youtube className="h-6 w-6" id="brand-youtube-icon" />
               )}
@@ -1242,11 +1292,11 @@ export default function App() {
                   EZ Toolbox
                 </span>
                 <span className="text-sm px-1.5 py-0.5 bg-gray-100 dark:bg-neutral-800 text-gray-600 dark:text-gray-400 font-mono rounded font-medium" id="brand-utility-logo">
-                  {subdomainView === "qr" ? "🎯" : subdomainView === "compress" ? "⚡" : subdomainView === "ip" ? "🌐" : subdomainView === "converter" ? "🧮" : "🛠️"}
+                  {subdomainView === "qr" ? "🎯" : subdomainView === "compress" ? "⚡" : subdomainView === "ip" ? "🌐" : subdomainView === "converter" ? "🧮" : subdomainView === "tiktok" ? "🎥" : "🛠️"}
                 </span>
               </div>
               <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wide uppercase" id="brand-subtext">
-                {subdomainView === "qr" ? "QR Generator & Scanner" : subdomainView === "compress" ? "Bulk Image Compressor" : subdomainView === "ip" ? "What is My IP & Location" : subdomainView === "converter" ? "Universal Converter & Calc" : "YT Analytics Engine"}
+                {subdomainView === "qr" ? "QR Generator & Scanner" : subdomainView === "compress" ? "Bulk Image Compressor" : subdomainView === "ip" ? "What is My IP & Location" : subdomainView === "converter" ? "Universal Converter & Calc" : subdomainView === "tiktok" ? "TikTok Pro Downloader" : "YT Analytics Engine"}
               </p>
             </div>
           </div>
@@ -1515,6 +1565,8 @@ export default function App() {
               <IpFinder adsEnabled={adsEnabled} />
             ) : subdomainView === "converter" ? (
               <UniversalConverter adsEnabled={adsEnabled} />
+            ) : subdomainView === "tiktok" ? (
+              <TiktokDownloader adsEnabled={adsEnabled} />
             ) : (
               <>
         

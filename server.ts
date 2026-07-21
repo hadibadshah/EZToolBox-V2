@@ -412,6 +412,153 @@ async function startServer() {
     }
   });
 
+  // ----------------------------------------------------
+  // API Endpoint: TikTok Downloader Proxy
+  // ----------------------------------------------------
+  app.get("/api/tiktok/info", async (req, res) => {
+    try {
+      const { url } = req.query;
+      if (!url || typeof url !== "string") {
+        return res.status(400).json({ error: "Missing TikTok video URL" });
+      }
+
+      const tikTokApiKey = process.env.TIKTOK_API_KEY || "32b97437f6152caa0e5e02ea20715751";
+      const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}&key=${tikTokApiKey}`;
+      
+      const apiRes = await fetch(apiUrl);
+      if (!apiRes.ok) {
+        throw new Error(`TikWM API responded with status ${apiRes.status}`);
+      }
+      
+      const data = await apiRes.json();
+      return res.json(data);
+    } catch (error: any) {
+      console.error("TikTok API fetch error:", error);
+      return res.status(500).json({ error: error.message || "Failed to fetch video details from TikTok API" });
+    }
+  });
+
+  // Helper: Fetch with manual redirect handling to preserve Referer and User-Agent headers
+  async function fetchWithHeadersAndRedirects(urlStr: string, headers: Record<string, string>, maxRedirects = 5): Promise<Response> {
+    let currentUrl = urlStr;
+    let redirects = 0;
+
+    while (redirects < maxRedirects) {
+      const res = await fetch(currentUrl, {
+        method: "GET",
+        headers: headers,
+        redirect: "manual" // Stop auto-following redirects to prevent header stripping
+      });
+
+      if (res.status >= 300 && res.status < 400) {
+        const location = res.headers.get("location");
+        if (!location) {
+          return res; // No location header, return redirect response as is
+        }
+        
+        // Resolve relative redirect URLs if any
+        currentUrl = new URL(location, currentUrl).toString();
+        redirects++;
+        console.log(`[TikTok Proxy] Following redirect (${redirects}/${maxRedirects}) to: ${currentUrl}`);
+        continue;
+      }
+
+      return res;
+    }
+
+    throw new Error("Too many redirects");
+  }
+
+  app.get("/api/download/tiktok", async (req, res) => {
+    try {
+      let { url, filename } = req.query;
+      if (!url || typeof url !== "string") {
+        return res.status(400).send("Missing download 'url' parameter.");
+      }
+
+      console.log(`[TikTok Proxy] Requesting download for URL: ${url}`);
+
+      const tikTokApiKey = process.env.TIKTOK_API_KEY || "32b97437f6152caa0e5e02ea20715751";
+
+      // If the URL is on tikwm.com, make sure the API key is appended if not already present
+      try {
+        if (url.includes("tikwm.com") && !url.includes("key=")) {
+          const separator = url.includes("?") ? "&" : "?";
+          url = `${url}${separator}key=${tikTokApiKey}`;
+          console.log(`[TikTok Proxy] Appended TIKTOK_API_KEY to TikWM URL`);
+        }
+      } catch (err) {
+        console.error("[TikTok Proxy] Error checking/appending key to URL:", err);
+      }
+
+      let referer = "https://www.tiktok.com/";
+      try {
+        const parsedUrl = new URL(url);
+        if (parsedUrl.hostname.includes("tikwm.com")) {
+          referer = "https://www.tikwm.com/";
+        } else if (parsedUrl.hostname.includes("tiktok.com")) {
+          referer = "https://www.tiktok.com/";
+        }
+      } catch (e) {
+        console.error("[TikTok Proxy] Error parsing URL for referer:", e);
+      }
+
+      console.log(`[TikTok Proxy] Using Referer: ${referer}`);
+
+      const downloadFilename = (filename as string) || "tiktok_video.mp4";
+      const requestHeaders: Record<string, string> = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Referer": referer,
+        "Accept": "*/*",
+        "Accept-Encoding": "identity",
+        "Connection": "keep-alive"
+      };
+
+      const response = await fetchWithHeadersAndRedirects(url, requestHeaders);
+
+      console.log(`[TikTok Proxy] Response status: ${response.status} ${response.statusText}`);
+
+      if (!response.ok) {
+        return res.status(response.status).send(`Failed to fetch stream: ${response.statusText}`);
+      }
+
+      const contentType = response.headers.get("content-type") || "video/mp4";
+      console.log(`[TikTok Proxy] Response Content-Type: ${contentType}`);
+      
+      // If the response is HTML or JSON, it is likely an error page/message from the CDN, not a video stream.
+      if (contentType.includes("text/html") || contentType.includes("application/json")) {
+        const errorText = await response.text();
+        console.error(`[TikTok Proxy] CDN returned non-video content: ${contentType}`, errorText.substring(0, 1000));
+        return res.status(403).send(`Download failed: The video server returned an error page instead of the video stream. This usually happens when TikTok CDN limits cloud hosting server access. Please use the "Direct Link" fallback option in the application UI to download instantly.`);
+      }
+
+      const safeFilename = downloadFilename.replace(/[^a-zA-Z0-9_.-]/g, "_");
+      res.setHeader("Content-Disposition", `attachment; filename="${safeFilename}"`);
+      res.setHeader("Content-Type", contentType);
+
+      const contentLength = response.headers.get("content-length");
+      if (contentLength) {
+        res.setHeader("Content-Length", contentLength);
+      }
+
+      const body = response.body;
+      if (body) {
+        // Stream the response directly to avoid buffer limits on huge files
+        const { Readable } = await import("stream");
+        const nodeStream = Readable.fromWeb(body as any);
+        nodeStream.on("error", (err) => {
+          console.error("[TikTok Proxy] Stream error:", err);
+        });
+        nodeStream.pipe(res);
+        return;
+      }
+      return res.status(500).send("No content stream available.");
+    } catch (error: any) {
+      console.error("TikTok download proxy error:", error);
+      return res.status(500).send(`Error proxying TikTok download stream: ${error.message}`);
+    }
+  });
+
   // API Endpoint: Get user's actual client IP, ISP, and Location
   app.get("/api/client-info", async (req, res) => {
     try {
