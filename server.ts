@@ -688,6 +688,8 @@ async function startServer() {
       sitemapFilename = "sitemap-compress.xml";
     } else if (host.includes("ip.eztoolbox.xyz") || host.includes("ip.")) {
       sitemapFilename = "sitemap-ip.xml";
+    } else if (host.includes("tiktok.eztoolbox.xyz") || host.includes("tiktok.")) {
+      sitemapFilename = "sitemap-tiktok.xml";
     } else if (host.includes("speed.eztoolbox.xyz") || host.includes("speed.")) {
       sitemapFilename = "sitemap-speed.xml";
     }
@@ -766,6 +768,7 @@ async function startServer() {
         const isQrSubdomain = host.includes("qr.eztoolbox.xyz") || host.includes("qr.") || host.startsWith("qr-");
         const isCompressSubdomain = host.includes("compress.eztoolbox.xyz") || host.includes("compress.") || host.startsWith("compress-");
         const isIpSubdomain = host.includes("ip.eztoolbox.xyz") || host.includes("ip.") || host.startsWith("ip-");
+        const isTiktokSubdomain = host.includes("tiktok.eztoolbox.xyz") || host.includes("tiktok.") || host.startsWith("tiktok-");
         const isConverterSubdomain = host.includes("converter.eztoolbox.xyz") || host.includes("converter.") || host.includes("speed.eztoolbox.xyz") || host.includes("speed.") || host.startsWith("converter-") || host.startsWith("speed-");
 
         // Default Meta Tags (YouTube Analyzer - Home Page)
@@ -797,6 +800,13 @@ async function startServer() {
           url = `https://ip.eztoolbox.xyz${reqPath}`;
           ogImage = "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&h=630&q=80";
           siteName = "EZ IP Finder";
+        } else if (isTiktokSubdomain) {
+          title = "EZ TikTok Downloader 🎬 — No Watermark TikTok Video & MP3 Downloader";
+          description = "Download TikTok videos without watermark in HD, extract background MP3 audio files, and download cover images instantly. Free, fast, and secure with no limitations!";
+          keywords = "tiktok downloader, download tiktok without watermark, tiktok video downloader, save tiktok mp3, extract tiktok music, ez tiktok downloader, ez toolbox";
+          url = `https://tiktok.eztoolbox.xyz${reqPath}`;
+          ogImage = "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=1200&h=630&q=80";
+          siteName = "EZ TikTok Downloader";
         } else if (isConverterSubdomain) {
           title = "EZ Universal Unit Converter & Calculator 🧮 — EZToolBox";
           description = "Convert units of length, area, volume, mass, temperature, speed, time, and data storage instantly. Use custom calculators and equation solvers online for free!";
@@ -845,6 +855,8 @@ async function startServer() {
           localOgPath = "og-image-compress.png";
         } else if (isIpSubdomain) {
           localOgPath = "og-image-ip.png";
+        } else if (isTiktokSubdomain) {
+          localOgPath = "og-image-tiktok.png";
         } else if (isConverterSubdomain) {
           localOgPath = "og-image-converter.png";
         } else {
@@ -856,6 +868,7 @@ async function startServer() {
           const domainUrl = isQrSubdomain ? "https://qr.eztoolbox.xyz" :
                             isCompressSubdomain ? "https://compress.eztoolbox.xyz" :
                             isIpSubdomain ? "https://ip.eztoolbox.xyz" :
+                            isTiktokSubdomain ? "https://tiktok.eztoolbox.xyz" :
                             isConverterSubdomain ? "https://converter.eztoolbox.xyz" :
                             "https://eztoolbox.xyz";
           ogImage = `${domainUrl}/assets/${localOgPath}`;

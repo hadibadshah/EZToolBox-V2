@@ -292,7 +292,7 @@ const NETWORK_TOOLS: FreeTool[] = [
     name: "EZ TikTok Downloader",
     description: "Download TikTok videos without watermarks in full HD quality, extract audio MP3s, and retrieve artwork covers instantly.",
     icon: "Video",
-    url: "https://tiktok.xyz",
+    url: "https://tiktok.eztoolbox.xyz",
     colorClass: "bg-cyan-500"
   }
 ];
@@ -857,7 +857,7 @@ export default function App() {
       compress: "fec6a1716171a197192b70e3bf7351e1",
       ip: "28fa5b133d1e8c669ee3eeb7efa5667f",
       converter: "33995635c87250fab03e2e29d59bb2f3",
-      tiktok: "33995635c87250fab03e2e29d59bb2f3"
+      tiktok: "6d41b66048743423de0f8a61888c4a1d"
     };
 
     const socialUrls: Record<"yt" | "qr" | "compress" | "ip" | "converter" | "tiktok", string> = {
@@ -866,7 +866,7 @@ export default function App() {
       compress: "https://pl30435866.effectivecpmnetwork.com/8a/11/2f/8a112f3aa228748d641d161bf78f216c.js",
       ip: "https://pl30435876.effectivecpmnetwork.com/c5/d4/25/c5d42549abdfc4c8b71bd0a7b5780260.js",
       converter: "https://pl30435884.effectivecpmnetwork.com/c3/5a/e6/c35ae6798df727b9077069e2f8698b59.js",
-      tiktok: "https://pl30435884.effectivecpmnetwork.com/c3/5a/e6/c35ae6798df727b9077069e2f8698b59.js"
+      tiktok: "https://pl30461963.effectivecpmnetwork.com/09/aa/6e/09aa6e2b9b20abeddb62e29a35dd4875.js"
     };
 
     const currentBannerKey = bannerKeys[subdomainView] || bannerKeys.yt;

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 interface AdsterraNativeProps {
   id: string;
   enabled: boolean;
-  subdomainView?: "yt" | "qr" | "compress" | "ip" | "converter";
+  subdomainView?: "yt" | "qr" | "compress" | "ip" | "converter" | "tiktok";
 }
 
 export const AdsterraNative: React.FC<AdsterraNativeProps> = ({ id, enabled, subdomainView }) => {
@@ -25,7 +25,7 @@ export const AdsterraNative: React.FC<AdsterraNativeProps> = ({ id, enabled, sub
   }, []);
 
   // Detect subdomain dynamically if prop is not supplied
-  const getSubdomain = (): "yt" | "qr" | "compress" | "ip" | "converter" => {
+  const getSubdomain = (): "yt" | "qr" | "compress" | "ip" | "converter" | "tiktok" => {
     if (subdomainView) return subdomainView;
     const hostname = window.location.hostname.toLowerCase();
     if (hostname.includes("qr.eztoolbox.xyz") || hostname.includes("qr.")) {
@@ -37,6 +37,9 @@ export const AdsterraNative: React.FC<AdsterraNativeProps> = ({ id, enabled, sub
     if (hostname.includes("ip.eztoolbox.xyz") || hostname.includes("ip.")) {
       return "ip";
     }
+    if (hostname.includes("tiktok.eztoolbox.xyz") || hostname.includes("tiktok.")) {
+      return "tiktok";
+    }
     if (hostname.includes("speed.eztoolbox.xyz") || hostname.includes("speed.") || hostname.includes("converter.")) {
       return "converter";
     }
@@ -47,7 +50,7 @@ export const AdsterraNative: React.FC<AdsterraNativeProps> = ({ id, enabled, sub
 
   // Native ad configs provided by the user for each subdomain
   const nativeConfigs: Record<
-    "yt" | "qr" | "compress" | "ip" | "converter",
+    "yt" | "qr" | "compress" | "ip" | "converter" | "tiktok",
     { containerId: string; scriptUrl: string }
   > = {
     yt: {
@@ -69,6 +72,10 @@ export const AdsterraNative: React.FC<AdsterraNativeProps> = ({ id, enabled, sub
     converter: {
       containerId: "685cbfd3fd5cd63623af078148fd7048",
       scriptUrl: "https://pl30435883.effectivecpmnetwork.com/685cbfd3fd5cd63623af078148fd7048/invoke.js"
+    },
+    tiktok: {
+      containerId: "0d347baaeba9ba249cc40f6655af8772",
+      scriptUrl: "https://pl30461962.effectivecpmnetwork.com/0d347baaeba9ba249cc40f6655af8772/invoke.js"
     }
   };
 

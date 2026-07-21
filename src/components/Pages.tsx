@@ -29,6 +29,10 @@ export const Pages: React.FC<PagesProps> = ({ currentPage, setCurrentPage, subdo
     if (path.includes("/articles/currency-exchange-rates-calculation-live-rates")) return 13;
     if (path.includes("/articles/importance-of-accurate-scientific-unit-converters")) return 14;
     if (path.includes("/articles/how-to-use-interactive-financial-calculators")) return 15;
+    // TikTok Articles
+    if (path.includes("/articles/how-to-download-tiktok-videos-without-watermark")) return 16;
+    if (path.includes("/articles/how-to-extract-high-quality-mp3-from-tiktok")) return 17;
+    if (path.includes("/articles/best-tiktok-downloader-unlimited-full-hd-saves")) return 18;
     return null;
   };
 
@@ -644,6 +648,143 @@ Every time you press the \`=\` key or hit Enter, the equation and its formatted 
     }
   ];
 
+  const tiktokArticles = [
+    {
+      id: 16,
+      title: "How to Download TikTok Videos Without Watermark in HD: Step-by-Step Guide",
+      summary: "Learn how TikTok's server architecture adds watermarks to downloaded videos and how you can bypass them using secure proxy downloads to get crystal-clear MP4s.",
+      slug: "how-to-download-tiktok-videos-without-watermark",
+      keywords: "download tiktok without watermark, tiktok video downloader, save tiktok videos, tiktok no watermark hd, free online tiktok downloader, premium proxy download, ez tiktok downloader",
+      date: "July 20, 2026",
+      readTime: "6 min read",
+      content: `### Demystifying the TikTok Watermark: Why It Exists and How It Works
+
+If you have ever clicked "Save Video" directly within the official TikTok mobile app, you have undoubtedly noticed the bouncing TikTok logo watermark overlay along with the creator's username. While this is an excellent tool for attribution and content protection within TikTok's ecosystem, it poses major limitations for content creators who wish to repurpose their original high-production videos for other platforms like YouTube Shorts, Instagram Reels, or Pinterest Pins.
+
+In this guide, we will break down the engineering behind TikTok's CDN watermarking process and walk you through how our **EZ TikTok Downloader** retrieves the pristine, raw, high-definition (HD) version of any public post.
+
+---
+
+### How TikTok's Server-Side Watermarking Works
+
+When you upload a video to TikTok, their media encoders compile multiple variants:
+1. **Raw Source Variant**: The original uploaded video stream preserved in high definition (stored securely in TikTok's cloud servers).
+2. **CDN Watermarked Variant**: A rendered version where a moving watermark is dynamically burned into the video tracks using video processing algorithms (FFmpeg-based processing).
+
+When a standard browser or mobile device requests a direct video file from the TikTok Content Delivery Network (CDN) without the correct authorization headers or token payloads, TikTok's system acts conservatively and serves the watermarked variant as a fallback. 
+
+---
+
+### Bypassing Watermarks Safely: Direct Links vs. Proxy Downloads
+
+Our tool provides two primary mechanisms to save your videos:
+
+1. **Download (Proxy) - *Recommended for 100% Watermark-Free Video***:
+   * **The Mechanism**: Clicking our "Download (Proxy)" button instructs our secure back-end cloud server to authenticate directly with TikTok's video streams using premium API credentials. Our server pretends to be a high-performance video player, fetches the original un-watermarked high-definition MP4 stream directly, and routes the data packets straight to your device's browser download pipeline.
+   * **The Benefit**: This guarantees you receive a clean, 1080p high-definition MP4 with zero watermarks, ready to be edited and repurposed immediately.
+
+2. **Direct CDN Links**:
+   * **The Mechanism**: This button opens a direct hyperlink pointing straight to TikTok's CDN databases. 
+   * **The Catch**: While fast, since this bypasses our proxy server, TikTok's CDN will detect that you are opening the video directly in a standard web browser and may serve the watermarked file instead. 
+
+---
+
+### Step-by-Step: Repurposing Your TikTok Content
+
+1. **Copy the Share Link**: Open TikTok on your mobile phone or browser, tap the **Share** button on any public video, and click **Copy Link**.
+2. **Enter in EZ Downloader**: Open the **EZ TikTok Downloader**, paste the copied link into our clean, single-screen input field, and tap **Extract Details**.
+3. **Download with Proxy**: Once the analysis completes, click the **Download (Proxy)** button on either the **Standard Video** or **Ultra HD Video** format cards.
+4. **Repurpose**: Upload your clean, water-mark free MP4 to YouTube Shorts, Instagram Reels, or Snapchat Spotlight and watch your multi-platform reach skyrocket!`
+    },
+    {
+      id: 17,
+      title: "How to Extract High-Quality MP3 Audio & Background Music From TikTok",
+      summary: "Discover how to capture viral TikTok sound bites and extract background music directly into pristine 320kbps MP3 audio files for offline listening or video editing.",
+      slug: "how-to-extract-high-quality-mp3-from-tiktok",
+      keywords: "extract tiktok mp3, tiktok to audio converter, save tiktok background music, viral tiktok sounds download, high quality tiktok mp3, audio extractor online, ez toolbox",
+      date: "July 20, 2026",
+      readTime: "5 min read",
+      content: `### Capturing the Sound of Pop Culture: TikTok's Audio Revolution
+
+TikTok is just as much an auditory platform as it is a visual one. From viral mashups and sped-up remixes to original indie soundtracks, the audio tracks of TikTok define modern pop music trends. In fact, many songs that climb the Billboard charts owe their success entirely to trending audio challenges on TikTok.
+
+Whether you are a music enthusiast wanting to save a rare remix for offline listening, or a content creator needing a specific transition sound effect for your next video editing project, extracting the audio track is highly useful. In this masterclass, we will learn how to extract pristine, high-fidelity MP3 files from any public TikTok post.
+
+---
+
+### The Anatomy of a TikTok Audio Stream
+
+Every TikTok post is associated with a specific music object:
+* **Original Sound Tracks**: Sourced directly from the user's uploaded video microphone stream.
+* **Commercial Music Tracks**: Authorized music licensed by record labels and overlaid onto the post.
+
+When you use the **EZ TikTok Downloader**, our system extracts the metadata of the background track, including the **Artist Name**, **Track Title**, and the raw **Audio CDN stream**. Our downloader accesses the highest-bitrate stream available (up to 320kbps) and encapsulates it inside an optimized digital container.
+
+---
+
+### Why Direct Audio Downloads Save Data & Time
+
+Converting a full video into an audio format on your device is slow and wastes data. Our tool streamlines this by identifying the exact audio track on TikTok's CDN servers before downloading:
+1. **Zero Transcoding Delay**: Instead of downloading a massive video file and manually stripping the video tracks, our tool fetches the native audio stream directly.
+2. **Save Bandwidth**: Audio files are typically only 1MB to 3MB in size, compared to high-definition video files which can easily exceed 20MB to 50MB. This is highly beneficial if you are downloading on mobile networks or capped data plans.
+3. **Universal Compatibility**: The extracted MP3 or M4A file is universally compatible with all modern smartphones, car audio systems, editing suites (Premiere, CapCut, DaVinci Resolve), and music players.
+
+---
+
+### How to Save a Sound Track to Your Phone
+
+1. **Extract details**: Paste your target video's share link into the **EZ TikTok Downloader** input.
+2. **Select Audio Card**: Scroll down to the **Extract Background Music (MP3)** download option.
+3. **Proxy Download**: Click the **Download MP3 (Proxy)** button to securely route the file through our server, giving you a perfectly formatted audio file named after the video's creator and audio title.
+4. **Direct Playback**: Alternatively, you can click **Direct Audio Link** to open the audio stream in a clean background browser tab where you can play it immediately or save it with a simple right-click.`
+    },
+    {
+      id: 18,
+      title: "The Ultimate TikTok Downloader: Unlimited Full HD & Cover Art Saves",
+      summary: "Compare the top methods of saving TikTok media. Learn how our single-page, ad-optimized tool lets you grab HD videos, original audio, and cover art with zero speed limits.",
+      slug: "best-tiktok-downloader-unlimited-full-hd-saves",
+      keywords: "best tiktok downloader, unlimited tiktok saves, high resolution cover art download, download tiktok thumbnail, full hd video downloader, ez toolbox, download tiktok free",
+      date: "July 20, 2026",
+      readTime: "7 min read",
+      content: `### The Search for a Clean, Unlimited Downloader: The Problem with Common Sites
+
+The internet is flooded with online TikTok downloaders. However, if you have ever used them, you are likely familiar with their typical drawbacks:
+* **Intrusive Ads and Redirection**: Clicking a download button often opens multiple pop-under spam tabs or deceptive virus warning modals.
+* **Artificial Speed Caps**: Slowing down your download to force you to purchase a premium subscription.
+* **Low-Resolution Output**: Restricting watermark-free downloads to low-quality 480p streams while locking HD options behind paywalls.
+* **No Metadata Retrieval**: Forcing generic filenames like \`download_18293712.mp4\`, which makes organizing files a nightmare.
+
+Our **EZ TikTok Downloader** was created to challenge this standard. It is fully integrated into the **EZ Toolbox suite**, providing a clean, single-screen, lightning-fast utility designed for power users, social media managers, and archivists.
+
+---
+
+### Key Advantages of the EZ TikTok Downloader
+
+Our suite is engineered to provide a premium desktop-grade utility experience on both mobile and desktop viewports:
+
+| Feature | Typical Downloaders | EZ TikTok Downloader |
+|---|---|---|
+| **HD Resolution** | Limited/Upscaled 720p | Full 1080p Ultra HD |
+| **Download Limits** | Capped per hour/IP | 100% Unlimited |
+| **Speed Limits** | Capped at 500 KB/s | Uncapped (Full Connection Speed) |
+| **Audio Extraction** | Low Quality Mono | High Bitrate Stereo MP3 |
+| **Cover Art / Thumbnails**| Not Supported | Original High-Res Cover JPEG |
+| **File Naming** | Random strings of numbers | Custom: \`[Creator_Username]_[type].mp4\` |
+
+---
+
+### Retrieving Original Cover Art & Thumbnails
+
+Why would you want to download a TikTok's cover artwork?
+For content managers and curators, having access to the high-resolution cover image is essential for creating:
+1. **Engaging Video Thumbnails**: Use the high-quality original JPEG frame to design thumbnails for YouTube Shorts or blog post banners.
+2. **Content Archives**: Catalog video collections visually inside Notion databases or local drives with high-resolution thumbnail cards.
+3. **Social Media Previews**: Ensure links render beautifully across platforms by extracting and attaching the native high-res cover image.
+
+To download the original thumbnail, simply navigate to the **Original Video Cover Image** section of our tool and select **Download Cover (Proxy)** to instantly fetch and save the high-resolution JPEG to your device.`
+    }
+  ];
+
   const articles = subdomainView === "qr" 
     ? qrArticles 
     : subdomainView === "compress" 
@@ -652,7 +793,9 @@ Every time you press the \`=\` key or hit Enter, the equation and its formatted 
         ? ipArticles
         : subdomainView === "converter"
           ? converterArticles
-          : youtubeArticles;
+          : subdomainView === "tiktok"
+            ? tiktokArticles
+            : youtubeArticles;
 
   return (
     <div className="space-y-8" id="seo-pages-container">
@@ -668,6 +811,7 @@ Every time you press the \`=\` key or hit Enter, the equation and its formatted 
             subdomainView === "compress" ? "Compressor Dashboard" :
             subdomainView === "ip" ? "IP Finder Dashboard" :
             subdomainView === "converter" ? "Converter Dashboard" :
+            subdomainView === "tiktok" ? "TikTok Downloader Dashboard" :
             "Analyzer Dashboard"
           }
         </button>
@@ -755,12 +899,29 @@ Every time you press the \`=\` key or hit Enter, the equation and its formatted 
           {selectedArticle === null ? (
             <div className="space-y-6">
               <div className="text-center space-y-2 mb-8">
-                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest block">Learn and Rank</span>
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest block">
+                  {subdomainView === "qr" ? "Scan and Connect" :
+                   subdomainView === "compress" ? "Optimize and Load" :
+                   subdomainView === "ip" ? "Locate and Secure" :
+                   subdomainView === "converter" ? "Convert and Calculate" :
+                   subdomainView === "tiktok" ? "Download and Repurpose" :
+                   "Learn and Rank"}
+                </span>
                 <h2 className="font-display font-extrabold text-2xl md:text-3xl text-gray-950 dark:text-white tracking-tight">
-                  Expert YouTube Growth Articles & SEO Guidebooks
+                  {subdomainView === "qr" ? "Expert QR Code Branding & Marketing Guidebooks" :
+                   subdomainView === "compress" ? "Expert Web Performance & Image Optimization Guides" :
+                   subdomainView === "ip" ? "Expert Geolocation, Networking & Security Guidebooks" :
+                   subdomainView === "converter" ? "Expert Unit Conversion & Financial Calculators" :
+                   subdomainView === "tiktok" ? "Expert TikTok Downloader & Repurposing Guidebooks" :
+                   "Expert YouTube Growth Articles & SEO Guidebooks"}
                 </h2>
                 <p className="text-xs text-gray-500 dark:text-gray-400 max-w-lg mx-auto">
-                  Master the algorithms, check monetization parameters, extract valuable search terms, and increase your CPM rates with our targeted articles.
+                  {subdomainView === "qr" ? "Master offline-to-online (O2O) marketing, customize QR codes with logos, choose correct formatting, and scale scan conversions." :
+                   subdomainView === "compress" ? "Boost your Google PageSpeed scores, optimize Core Web Vitals, learn the differences between WebP and PNG/JPG formats, and preserve image quality." :
+                   subdomainView === "ip" ? "Demystify IPv4 vs IPv6 routing, inspect network ASN allocations, understand ISP nodes, and run accurate ping latency diagnostics." :
+                   subdomainView === "converter" ? "Sync live mid-market interbank forex feeds, understand scientific weight/distance scales, and master calculators for bookkeeping." :
+                   subdomainView === "tiktok" ? "Learn how to bypass watermarks on downloaded videos, extract original background MP3 sounds, and save high-resolution cover artwork." :
+                   "Master the algorithms, check monetization parameters, extract valuable search terms, and increase your CPM rates with our targeted articles."}
                 </p>
               </div>
 

@@ -3,14 +3,14 @@ import React from "react";
 interface Adsterra160x600Props {
   id: string;
   enabled: boolean;
-  subdomainView?: "yt" | "qr" | "compress" | "ip" | "converter";
+  subdomainView?: "yt" | "qr" | "compress" | "ip" | "converter" | "tiktok";
 }
 
 export const Adsterra160x600: React.FC<Adsterra160x600Props> = ({ id, enabled, subdomainView }) => {
   if (!enabled) return null;
 
   // Detect subdomain dynamically if prop is not supplied
-  const getSubdomain = (): "yt" | "qr" | "compress" | "ip" | "converter" => {
+  const getSubdomain = (): "yt" | "qr" | "compress" | "ip" | "converter" | "tiktok" => {
     if (subdomainView) return subdomainView;
     const hostname = window.location.hostname.toLowerCase();
     if (hostname.includes("qr.eztoolbox.xyz") || hostname.includes("qr.")) {
@@ -22,6 +22,9 @@ export const Adsterra160x600: React.FC<Adsterra160x600Props> = ({ id, enabled, s
     if (hostname.includes("ip.eztoolbox.xyz") || hostname.includes("ip.")) {
       return "ip";
     }
+    if (hostname.includes("tiktok.eztoolbox.xyz") || hostname.includes("tiktok.")) {
+      return "tiktok";
+    }
     if (hostname.includes("speed.eztoolbox.xyz") || hostname.includes("speed.") || hostname.includes("converter.")) {
       return "converter";
     }
@@ -31,12 +34,13 @@ export const Adsterra160x600: React.FC<Adsterra160x600Props> = ({ id, enabled, s
   const subdomain = getSubdomain();
 
   // Keys provided by the user for each subdomain
-  const keys: Record<"yt" | "qr" | "compress" | "ip" | "converter", string> = {
+  const keys: Record<"yt" | "qr" | "compress" | "ip" | "converter" | "tiktok", string> = {
     yt: "0c8e47ca0a8ba92313c682d25488b03a",
     qr: "3f36335f0794b17bcb52d7cfb8eeb3df",
     compress: "2919ac53312294d1d6302fc8e17ae34a",
     ip: "4f3dcf1c94b6178e9c95904601d27e0c",
-    converter: "b2ee6ff48bc09dc8d8dc324e6d1e760f"
+    converter: "b2ee6ff48bc09dc8d8dc324e6d1e760f",
+    tiktok: "9de2f9d9cb74a63afeefff5cdb6bc440"
   };
 
   const adKey = keys[subdomain] || keys.yt;
