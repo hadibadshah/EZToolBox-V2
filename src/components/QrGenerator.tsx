@@ -34,7 +34,9 @@ import {
   Calendar,
   Video,
   Apple,
-  Play
+  Play,
+  Landmark,
+  Building2
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import QRCode from "qrcode";
@@ -57,6 +59,7 @@ type QRType =
   | "youtube" 
   | "tiktok" 
   | "twitter" 
+  | "bank"
   | "bitcoin" 
   | "ethereum" 
   | "upi" 
@@ -66,6 +69,22 @@ type QRType =
   | "spotify" 
   | "appstore" 
   | "googleplay";
+
+export const BANK_PRESETS: Record<string, { name: string; color: string; badge: string }> = {
+  easypaisa: { name: "Easypaisa Wallet", color: "#10b981", badge: "🟢 Easypaisa Wallet" },
+  jazzcash: { name: "JazzCash Wallet", color: "#ef4444", badge: "🔴 JazzCash Wallet" },
+  raast: { name: "Raast / IBAN (Instant)", color: "#059669", badge: "⚡ Raast Payment" },
+  sadapay: { name: "SadaPay", color: "#14b8a6", badge: "🩵 SadaPay" },
+  nayapay: { name: "NayaPay", color: "#f97316", badge: "🧡 NayaPay" },
+  meezan: { name: "Meezan Bank", color: "#7c3aed", badge: "🏛️ Meezan Bank" },
+  hbl: { name: "HBL (Habib Bank)", color: "#047857", badge: "🏛️ HBL" },
+  alfalah: { name: "Bank Alfalah", color: "#dc2626", badge: "🏛️ Bank Alfalah" },
+  mcb: { name: "MCB Bank", color: "#ea580c", badge: "🏛️ MCB" },
+  ubl: { name: "UBL (United Bank)", color: "#2563eb", badge: "🏛️ UBL" },
+  allied: { name: "Allied Bank (ABL)", color: "#1d4ed8", badge: "🏛️ Allied Bank" },
+  scb: { name: "Standard Chartered", color: "#0284c7", badge: "🏛️ Standard Chartered" },
+  other: { name: "Other Bank / Custom IBAN", color: "#475569", badge: "🏦 Custom Bank / IBAN" }
+};
 
 interface QrGeneratorProps {
   adsEnabled: boolean;
@@ -119,6 +138,15 @@ export const QrGenerator: React.FC<QrGeneratorProps> = ({ adsEnabled }) => {
   const [appStoreId, setAppStoreId] = useState("");
   const [playStorePackage, setPlayStorePackage] = useState("");
   
+  // --- Bank / Wallet Payment State ---
+  const [bankType, setBankType] = useState<string>("easypaisa");
+  const [bankTitle, setBankTitle] = useState<string>("");
+  const [bankAccount, setBankAccount] = useState<string>("");
+  const [bankName, setBankName] = useState<string>("");
+  const [bankAmount, setBankAmount] = useState<string>("");
+  const [bankCurrency, setBankCurrency] = useState<string>("PKR");
+  const [bankNote, setBankNote] = useState<string>("");
+
   // Customization States
   const [fgColor, setFgColor] = useState("#0f172a"); // Slate 900
   const [bgColor, setBgColor] = useState("#ffffff"); // White
@@ -183,6 +211,13 @@ export const QrGenerator: React.FC<QrGeneratorProps> = ({ adsEnabled }) => {
     upiNote,
     paypalUser,
     paypalAmount,
+    bankType,
+    bankTitle,
+    bankAccount,
+    bankName,
+    bankAmount,
+    bankCurrency,
+    bankNote,
     eventName,
     eventLocation,
     eventStart,
@@ -203,6 +238,24 @@ export const QrGenerator: React.FC<QrGeneratorProps> = ({ adsEnabled }) => {
   // Construct data based on type
   const getQRValue = (): string => {
     switch (qrType) {
+      case "bank": {
+        const displayBank = bankType === "other" 
+          ? (bankName.trim() || "Bank Account") 
+          : BANK_PRESETS[bankType]?.name || "Bank Account";
+
+        const lines = [
+          `BANK / WALLET: ${displayBank}`,
+          `ACCOUNT TITLE: ${bankTitle.trim()}`,
+          `ACCOUNT / IBAN / NUMBER: ${bankAccount.trim()}`
+        ];
+        if (bankAmount.trim()) {
+          lines.push(`AMOUNT: ${bankCurrency} ${bankAmount.trim()}`);
+        }
+        if (bankNote.trim()) {
+          lines.push(`NOTE / REFERENCE: ${bankNote.trim()}`);
+        }
+        return lines.join("\n");
+      }
       case "url":
         return inputValue.trim().startsWith("http") ? inputValue.trim() : `https://${inputValue.trim()}`;
       case "text":
@@ -430,11 +483,13 @@ END:VCALENDAR`;
   };
 
   // Preset Logos Helper
-  const setPresetLogo = (type: "none" | "ez" | "yt" | "wa" | "fb" | "ig" | "ln" | "tw" | "tt" | "sp" | "link" | "wifi") => {
+  const setPresetLogo = (type: "none" | "ez" | "yt" | "wa" | "fb" | "ig" | "ln" | "tw" | "tt" | "sp" | "link" | "wifi" | "bank") => {
     if (type === "none") {
       setLogoImage(null);
     } else if (type === "ez") {
       setLogoImage("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981' width='100' height='100'><path d='M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z'/></svg>");
+    } else if (type === "bank") {
+      setLogoImage("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981' width='100' height='100'><path d='M4 10h16v10H4V10zm0-3h16V5H4v2zm2 5h3v6H6v-6zm5 0h3v6h-3v-6zm5 0h3v6h-3v-6zM12 1L2 5v1h20V5L12 1z'/></svg>");
     } else if (type === "yt") {
       setLogoImage("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff0000' width='100' height='100'><path d='M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.508a3.003 3.003 0 0 0-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.871.508 9.388.508 9.388.508s7.517 0 9.388-.508a3.003 3.003 0 0 0 2.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'/></svg>");
     } else if (type === "wa") {
@@ -761,6 +816,12 @@ END:VCALENDAR`;
 
                 {typeCategory === "finance" && (
                   <>
+                    <button
+                      onClick={() => { setQrType("bank"); setBankType("easypaisa"); setBankTitle(""); setBankAccount(""); setBankAmount(""); setBankNote(""); }}
+                      className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-[10px] md:text-xs font-bold transition-all cursor-pointer ${qrType === "bank" ? "bg-emerald-50 border-emerald-500 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400" : "bg-slate-50 dark:bg-neutral-950 border-slate-200/50 dark:border-neutral-800 text-gray-600 dark:text-neutral-400 hover:bg-slate-100"}`}
+                    >
+                      <Landmark className="h-4 w-4 text-emerald-600" /> Bank & Wallet
+                    </button>
                     <button
                       onClick={() => { setQrType("upi"); setUpiVpa(""); setUpiName(""); setUpiAmount(""); setUpiNote(""); }}
                       className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-[10px] md:text-xs font-bold transition-all cursor-pointer ${qrType === "upi" ? "bg-emerald-50 border-emerald-500 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400" : "bg-slate-50 dark:bg-neutral-950 border-slate-200/50 dark:border-neutral-800 text-gray-600 dark:text-neutral-400 hover:bg-slate-100"}`}
@@ -1109,6 +1170,145 @@ END:VCALENDAR`;
                       placeholder="e.g. https://open.spotify.com/track/..."
                       className="w-full bg-slate-50 dark:bg-neutral-950/40 border border-slate-200 dark:border-neutral-800 rounded-xl px-4 py-2.5 text-xs md:text-sm font-semibold outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-neutral-900 transition-all text-gray-950 dark:text-white"
                     />
+                  </div>
+                )}
+
+                {qrType === "bank" && (
+                  <div className="space-y-4" id="form-bank-qr">
+                    {/* Quick Preset Selector for Bank/Wallet */}
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-extrabold text-gray-400 dark:text-neutral-500 uppercase block">
+                        Select Wallet or Bank Provider
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" id="bank-type-presets">
+                        {Object.entries(BANK_PRESETS).map(([key, preset]) => (
+                          <button
+                            key={key}
+                            type="button"
+                            onClick={() => {
+                              setBankType(key);
+                              setPresetLogo("bank");
+                            }}
+                            className={`p-2.5 rounded-xl border text-[11px] font-bold text-left transition-all cursor-pointer flex items-center justify-between ${
+                              bankType === key
+                                ? "bg-emerald-50 border-emerald-500 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300 font-extrabold shadow-xs"
+                                : "bg-slate-50 dark:bg-neutral-950 border-slate-200/50 dark:border-neutral-800 text-gray-700 dark:text-neutral-300 hover:bg-slate-100"
+                            }`}
+                          >
+                            <span className="truncate">{preset.name}</span>
+                            {bankType === key && <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0 ml-1" />}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Custom Bank Name input if "other" selected */}
+                    {bankType === "other" && (
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-extrabold text-gray-400 dark:text-neutral-500 uppercase">
+                          Bank / Financial Institution Name
+                        </label>
+                        <input
+                          type="text"
+                          value={bankName}
+                          onChange={(e) => setBankName(e.target.value)}
+                          placeholder="e.g. Faysal Bank, Dubai Islamic Bank, Citibank..."
+                          className="w-full bg-slate-50 dark:bg-neutral-950/40 border border-slate-200 dark:border-neutral-800 rounded-xl px-4 py-2.5 text-xs md:text-sm font-semibold outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-neutral-900 transition-all text-gray-950 dark:text-white"
+                          id="input-bank-custom-name"
+                        />
+                      </div>
+                    )}
+
+                    {/* Account Title & Account Number / IBAN Grid */}
+                    <div className="grid md:grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-extrabold text-gray-400 dark:text-neutral-500 uppercase">
+                          Account Title / Holder Name *
+                        </label>
+                        <input
+                          type="text"
+                          value={bankTitle}
+                          onChange={(e) => setBankTitle(e.target.value)}
+                          placeholder="e.g. Muhammad Rafique"
+                          className="w-full bg-slate-50 dark:bg-neutral-950/40 border border-slate-200 dark:border-neutral-800 rounded-xl px-4 py-2.5 text-xs md:text-sm font-semibold outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-neutral-900 transition-all text-gray-950 dark:text-white"
+                          id="input-bank-title"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-extrabold text-gray-400 dark:text-neutral-500 uppercase">
+                          Account Number / Mobile / IBAN *
+                        </label>
+                        <input
+                          type="text"
+                          value={bankAccount}
+                          onChange={(e) => setBankAccount(e.target.value)}
+                          placeholder="e.g. 03001234567 or PK36MEZN0012345678901234"
+                          className="w-full bg-slate-50 dark:bg-neutral-950/40 border border-slate-200 dark:border-neutral-800 rounded-xl px-4 py-2.5 text-xs md:text-sm font-semibold outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-neutral-900 transition-all text-gray-950 dark:text-white font-mono"
+                          id="input-bank-account"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Amount & Currency Grid */}
+                    <div className="grid md:grid-cols-3 gap-3">
+                      <div className="md:col-span-2 space-y-1.5">
+                        <label className="text-[11px] font-extrabold text-gray-400 dark:text-neutral-500 uppercase">
+                          Payment Amount (Optional)
+                        </label>
+                        <input
+                          type="number"
+                          value={bankAmount}
+                          onChange={(e) => setBankAmount(e.target.value)}
+                          placeholder="e.g. 5000"
+                          className="w-full bg-slate-50 dark:bg-neutral-950/40 border border-slate-200 dark:border-neutral-800 rounded-xl px-4 py-2.5 text-xs md:text-sm font-semibold outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-neutral-900 transition-all text-gray-950 dark:text-white"
+                          id="input-bank-amount"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-extrabold text-gray-400 dark:text-neutral-500 uppercase">
+                          Currency
+                        </label>
+                        <select
+                          value={bankCurrency}
+                          onChange={(e) => setBankCurrency(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-neutral-800 rounded-xl px-3 py-2.5 text-xs font-semibold outline-none focus:border-emerald-500 transition-all text-gray-950 dark:text-white cursor-pointer"
+                          id="select-bank-currency"
+                        >
+                          <option value="PKR">PKR (Rs)</option>
+                          <option value="USD">USD ($)</option>
+                          <option value="EUR">EUR (€)</option>
+                          <option value="GBP">GBP (£)</option>
+                          <option value="AED">AED (Dirham)</option>
+                          <option value="SAR">SAR (Riyal)</option>
+                          <option value="INR">INR (₹)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Note / Purpose */}
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-extrabold text-gray-400 dark:text-neutral-500 uppercase">
+                        Payment Purpose / Reference Note (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={bankNote}
+                        onChange={(e) => setBankNote(e.target.value)}
+                        placeholder="e.g. Order payment, Rent share, Freelance invoice #1024"
+                        className="w-full bg-slate-50 dark:bg-neutral-950/40 border border-slate-200 dark:border-neutral-800 rounded-xl px-4 py-2.5 text-xs md:text-sm font-semibold outline-none focus:border-emerald-500 focus:bg-white dark:focus:bg-neutral-900 transition-all text-gray-950 dark:text-white"
+                        id="input-bank-note"
+                      />
+                    </div>
+
+                    {/* Verification Badge Tip */}
+                    <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 p-3 rounded-xl flex items-start gap-2 text-emerald-800 dark:text-emerald-300">
+                      <Sparkles className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <p className="text-[11px] leading-relaxed font-medium">
+                        <strong>Instant Bank Payment QR:</strong> Anyone scanning this QR code with mobile banking apps or phone camera will immediately see your exact account title, bank name, and IBAN/number for instant, error-free payment transfers!
+                      </p>
+                    </div>
                   </div>
                 )}
 
@@ -1463,9 +1663,15 @@ END:VCALENDAR`;
                     </button>
                     <button 
                       onClick={() => setPresetLogo("ez")}
-                      className={`py-2 px-1 text-[10px] font-extrabold uppercase rounded-lg border cursor-pointer transition-all ${logoImage?.includes('%2310b981') ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400':'border-slate-200 dark:border-neutral-800 hover:bg-slate-50'}`}
+                      className={`py-2 px-1 text-[10px] font-extrabold uppercase rounded-lg border cursor-pointer transition-all ${logoImage?.includes('14.7') ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400':'border-slate-200 dark:border-neutral-800 hover:bg-slate-50'}`}
                     >
                       EZ Tool
+                    </button>
+                    <button 
+                      onClick={() => setPresetLogo("bank")}
+                      className={`py-2 px-1 text-[10px] font-extrabold uppercase rounded-lg border cursor-pointer transition-all ${logoImage?.includes('M4%2010h16v10H4V10zm0-3h16V5H4v2zm2') || logoImage?.includes('M4 10h16v10H4V10') ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400':'border-slate-200 dark:border-neutral-800 hover:bg-slate-50'}`}
+                    >
+                      Bank Logo
                     </button>
                     <button 
                       onClick={() => setPresetLogo("yt")}

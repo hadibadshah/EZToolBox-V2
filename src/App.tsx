@@ -314,6 +314,10 @@ const FAQ_ITEMS: FAQItem[] = [
 
 const QR_FAQ_ITEMS: FAQItem[] = [
   {
+    question: "Can I generate QR Codes for Bank Accounts, Easypaisa, JazzCash, or Raast payments?",
+    answer: "Yes! Select the 'Finance & Crypto' category tab in Step 1, click 'Bank & Wallet', and choose your provider (Easypaisa, JazzCash, Raast / IBAN, SadaPay, NayaPay, Meezan, HBL, MCB, UBL, etc.). Enter your account title and account/IBAN number. Anyone scanning the resulting QR code with mobile banking apps or phone camera will immediately see your verified payment details for fast, error-free transfers."
+  },
+  {
     question: "How do I add an official brand logo to my custom QR Code?",
     answer: "With EZ Toolbox, adding a logo is simple! Scroll to the 'Customization' section under 'Step 2', upload your own PNG/JPG file, or select one of our premium preset icons (like YouTube, WhatsApp, Facebook, or Spotify) with a single click. We generate high-resolution custom canvas frames with a high error correction rate (Level H) to ensure the code remains perfectly scannable even with a custom image in the center."
   },
