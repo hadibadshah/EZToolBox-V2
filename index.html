@@ -23,7 +23,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- Silence benign third-party ad script errors (like Adsterra) from bubbling up to the global error handler -->
+    <!-- Silence benign third-party ad script errors (like Adsterra) -->
     <script id="error-filter">
       window.addEventListener('error', function(e) {
         if (e.message === 'Script error.' || (e.filename && (e.filename.includes('highperformanceformat') || e.filename.includes('effectivecpmnetwork') || e.filename.includes('adsterra')))) {
@@ -42,9 +42,9 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2310b981'/%3E%3Ctext x='50' y='65' font-family='system-ui, sans-serif' font-weight='900' font-size='52' fill='white' text-anchor='middle'%3EEZ%3C/text%3E%3C/svg%3E" />
     <meta name="google-site-verification" content="googleb53210ff3f96f54d" />
     
-    <!-- SEO Meta Description (Fixes Bing & Google Webmaster missing meta description error) -->
+    <!-- SEO Meta Description & Keywords -->
     <meta name="description" content="EZ Toolbox is a free online web utility suite featuring YouTube SEO Analyzer &amp; Metadata Extractor, Custom QR Code Generator with EasyPaisa, JazzCash &amp; Bank Account support, Bulk Image Compressor, My IP Geolocation Finder, and Universal Currency Converter." />
-    <meta name="keywords" content="EZ Toolbox, YouTube Analyzer, YouTube Metadata Extractor, QR Code Generator, EasyPaisa QR Code, JazzCash QR Code, Bank Account QR Code, Image Compressor, My IP Finder, Currency Converter" />
+    <meta name="keywords" content="EZ Toolbox, YouTube SEO Analyzer, YouTube Tag Extractor, YouTube Thumbnail Downloader, Custom QR Code Generator, EasyPaisa QR Code, JazzCash QR Code, Bank Account QR Code, Bulk Image Compressor, My IP Address Finder, Universal Currency Converter" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://eztoolbox.xyz/" />
 
@@ -53,24 +53,86 @@
     <meta property="og:site_name" content="EZ Toolbox" />
     <meta property="og:url" content="https://eztoolbox.xyz/" />
     <meta property="og:title" content="EZ Toolbox — Free YouTube SEO Analyzer, QR Generator &amp; Web Utilities" />
-    <meta property="og:description" content="Free online tool suite: YouTube Video &amp; Channel Analyzer, Custom QR Code Generator with EasyPaisa/Bank support, Bulk Image Compressor, IP Finder &amp; Universal Converter." />
+    <meta property="og:description" content="Free online web utilities: YouTube Video &amp; Channel SEO Analyzer, Custom QR Code Generator with EasyPaisa/Bank support, Bulk Image Compressor, IP Finder &amp; Universal Converter." />
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="EZ Toolbox — Free YouTube SEO Analyzer, QR Generator &amp; Web Utilities" />
-    <meta name="twitter:description" content="Free online tool suite: YouTube Video &amp; Channel Analyzer, Custom QR Code Generator with EasyPaisa/Bank support, Bulk Image Compressor, IP Finder &amp; Universal Converter." />
+    <meta name="twitter:description" content="Free online web utilities: YouTube Video &amp; Channel SEO Analyzer, Custom QR Code Generator with EasyPaisa/Bank support, Bulk Image Compressor, IP Finder &amp; Universal Converter." />
 
-    <title>EZ Toolbox — YouTube Analyzer, QR Generator &amp; Web Utilities</title>
+    <!-- JSON-LD Structured Data Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://eztoolbox.xyz/#website",
+          "url": "https://eztoolbox.xyz/",
+          "name": "EZ Toolbox",
+          "description": "Free online web utility suite for YouTube SEO analysis, QR code generation, image compression, IP location finding, and unit conversion.",
+          "publisher": {
+            "@id": "https://eztoolbox.xyz/#organization"
+          }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://eztoolbox.xyz/#organization",
+          "name": "EZ Toolbox",
+          "url": "https://eztoolbox.xyz/",
+          "logo": "https://eztoolbox.xyz/assets/logo.png"
+        },
+        {
+          "@type": "WebApplication",
+          "name": "EZ Toolbox Web Utilities",
+          "url": "https://eztoolbox.xyz/",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "All",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <title>EZ Toolbox — YouTube SEO Analyzer, Custom QR Generator &amp; Web Utilities</title>
   </head>
   <body>
     <div id="root">
-      <!-- Pre-hydration static fallback for SEO crawlers (Fixes Bing Site Scan H1 tag missing notice) -->
-      <header style="display:none;">
-        <h1>EZ Toolbox — Free YouTube SEO Analyzer, Custom QR Generator &amp; Web Utility Suite</h1>
-        <p>Analyze YouTube video metadata, generate payment QR codes for Easypaisa, JazzCash, and Banks, compress images, find IP location, and convert currencies.</p>
-      </header>
+      <!-- Pre-hydration static fallback for SEO crawlers (Visible to Googlebot/Bingbot before JS execution) -->
+      <main class="seo-crawler-fallback" style="padding: 20px; font-family: system-ui, sans-serif; max-width: 1200px; margin: 0 auto; color: #1e293b;">
+        <header>
+          <h1 style="font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">EZ Toolbox — Free YouTube SEO Analyzer, Custom QR Code Generator &amp; Online Utilities</h1>
+          <p style="font-size: 16px; line-height: 1.6; color: #475569;">Welcome to <strong>EZ Toolbox</strong>, your all-in-one suite of fast, privacy-focused online web tools. Extract YouTube video tags and thumbnails, generate custom QR codes with bank and mobile wallet support, compress images in bulk, check your IP geolocation, and convert currencies instantly.</p>
+        </header>
+
+        <section style="margin-top: 30px;">
+          <h2 style="font-size: 22px; font-weight: 700; color: #0f172a;">Our Free Web Utility Suite:</h2>
+          <ul style="line-height: 2; font-size: 15px; color: #334155;">
+            <li><strong>YouTube SEO Analyzer &amp; Thumbnail Downloader:</strong> Extract tags, titles, descriptions, CPM estimates, channel analytics, and download HD/4K thumbnails.</li>
+            <li><strong>Custom QR Code Generator:</strong> Create branded QR codes with custom colors, logos, and instant payment templates for EasyPaisa, JazzCash, Raast, and Bank Accounts.</li>
+            <li><strong>Bulk Image Compressor:</strong> Reduce image file sizes (JPEG, PNG, WebP) by up to 90% right in your browser with zero server uploads.</li>
+            <li><strong>My IP Geolocation Finder:</strong> Instantly check your public IPv4/IPv6 address, ISP details, city, region, and map location.</li>
+            <li><strong>Universal Currency &amp; Unit Converter:</strong> Live exchange rates and instant scientific measurement unit conversions.</li>
+          </ul>
+        </section>
+
+        <footer style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 14px; color: #64748b;">
+          <nav>
+            <a href="https://eztoolbox.xyz/" style="margin-right: 15px; color: #059669; font-weight: 600;">Main Tools</a>
+            <a href="https://qr.eztoolbox.xyz/" style="margin-right: 15px; color: #059669; font-weight: 600;">QR Code Generator</a>
+            <a href="https://compress.eztoolbox.xyz/" style="margin-right: 15px; color: #059669; font-weight: 600;">Image Compressor</a>
+            <a href="https://ip.eztoolbox.xyz/" style="margin-right: 15px; color: #059669; font-weight: 600;">IP Finder</a>
+            <a href="https://converter.eztoolbox.xyz/" style="margin-right: 15px; color: #059669; font-weight: 600;">Universal Converter</a>
+            <a href="https://tiktok.eztoolbox.xyz/" style="margin-right: 15px; color: #059669; font-weight: 600;">TikTok Downloader</a>
+          </nav>
+          <p style="margin-top: 10px;">&copy; 2026 EZ Toolbox. All rights reserved.</p>
+        </footer>
+      </main>
     </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

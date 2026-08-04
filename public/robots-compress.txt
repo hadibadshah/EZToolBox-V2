@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://compress.eztoolbox.xyz/sitemap.xml

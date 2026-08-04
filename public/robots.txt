@@ -2,7 +2,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://eztoolbox.xyz/sitemap.xml
-Sitemap: https://qr.eztoolbox.xyz/sitemap-qr.xml
-Sitemap: https://compress.eztoolbox.xyz/sitemap-compress.xml
-Sitemap: https://ip.eztoolbox.xyz/sitemap-ip.xml
-Sitemap: https://speed.eztoolbox.xyz/sitemap-speed.xml

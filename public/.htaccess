@@ -1,6 +1,46 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # Dynamic Sitemap Routing based on Subdomain HTTP_HOST
+  RewriteCond %{HTTP_HOST} ^qr\. [NC]
+  RewriteRule ^sitemap\.xml$ sitemap-qr.xml [L]
+
+  RewriteCond %{HTTP_HOST} ^compress\. [NC]
+  RewriteRule ^sitemap\.xml$ sitemap-compress.xml [L]
+
+  RewriteCond %{HTTP_HOST} ^ip\. [NC]
+  RewriteRule ^sitemap\.xml$ sitemap-ip.xml [L]
+
+  RewriteCond %{HTTP_HOST} ^converter\. [NC]
+  RewriteRule ^sitemap\.xml$ sitemap-converter.xml [L]
+
+  RewriteCond %{HTTP_HOST} ^tiktok\. [NC]
+  RewriteRule ^sitemap\.xml$ sitemap-tiktok.xml [L]
+
+  RewriteCond %{HTTP_HOST} ^speed\. [NC]
+  RewriteRule ^sitemap\.xml$ sitemap-speed.xml [L]
+
+  # Dynamic robots.txt Routing based on Subdomain HTTP_HOST
+  RewriteCond %{HTTP_HOST} ^qr\. [NC]
+  RewriteRule ^robots\.txt$ robots-qr.txt [L]
+
+  RewriteCond %{HTTP_HOST} ^compress\. [NC]
+  RewriteRule ^robots\.txt$ robots-compress.txt [L]
+
+  RewriteCond %{HTTP_HOST} ^ip\. [NC]
+  RewriteRule ^robots\.txt$ robots-ip.txt [L]
+
+  RewriteCond %{HTTP_HOST} ^converter\. [NC]
+  RewriteRule ^robots\.txt$ robots-converter.txt [L]
+
+  RewriteCond %{HTTP_HOST} ^tiktok\. [NC]
+  RewriteRule ^robots\.txt$ robots-tiktok.txt [L]
+
+  RewriteCond %{HTTP_HOST} ^speed\. [NC]
+  RewriteRule ^robots\.txt$ robots-speed.txt [L]
+
+  # Standard SPA HTML5 History Mode Fallback
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d

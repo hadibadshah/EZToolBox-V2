@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://converter.eztoolbox.xyz/sitemap.xml
